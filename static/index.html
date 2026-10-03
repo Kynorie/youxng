@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>YouXNG</title>
+<style>
+:root{--bg:#fff;--deep:#ececec;--side:#f6f6f6;--fg:#111;--mut:#666;--line:#d2d2d2;--in:#fff}
+:root[data-dark]{--bg:#17181a;--deep:#0e0f10;--side:#1e1f22;--fg:#eee;--mut:#999;--line:#3a3b3f;--in:#232427}
+*{box-sizing:border-box;border-radius:0!important}
+[hidden]{display:none!important}
+body{margin:0;height:100vh;display:flex;background:var(--bg);color:var(--fg);font:15px system-ui,sans-serif}
+nav{width:var(--nw,190px);flex:none;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:var(--gap,22px);background:var(--side);border-right:1px solid var(--line);padding:20px 0}
+nav h1{font-size:18px;margin:0 16px 12px}
+.lbl{display:flex;align-items:center;gap:8px}
+.store ul{display:table;margin:24px auto 0;padding-left:20px;text-align:left}
+.store li{margin:4px 0}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center}
+.box{background:var(--bg);border:1px solid var(--line);padding:28px 36px;text-align:center}
+.box h2{margin-bottom:18px}
+.grip{position:absolute;top:0;right:0;width:6px;height:100%;cursor:col-resize}
+.grip:hover{background:var(--line)}
+.title{text-align:center;font-size:44px;font-weight:800;font-style:italic;margin-bottom:18px}
+nav button{white-space:nowrap;display:flex;gap:10px;align-items:center;width:100%;padding:11px 16px;border:0;background:none;color:var(--fg);font:inherit;cursor:pointer;text-align:left}
+nav button.on{background:var(--bg);box-shadow:inset 3px 0 var(--fg)}
+svg{width:20px;height:20px;flex:none}
+main{flex:1;overflow:auto;padding:32px;display:flex;flex-direction:column;align-items:center}
+section{display:none;width:100%;max-width:560px}
+section.on{display:block}
+#home.on{margin:auto 0}
+.row{display:flex}
+input[type=text]{flex:1;height:46px;padding:0 14px;font:16px inherit;background:var(--in);color:var(--fg);border:1px solid var(--line);outline:0}
+input[type=text]:focus{border-color:var(--fg)}
+#go{width:46px;height:46px;border:1px solid var(--line);border-left:0;background:var(--in);color:var(--fg);cursor:pointer;display:grid;place-items:center}
+#go svg{width:22px;height:22px}
+.card{margin-top:12px;padding:14px 16px;color:#fff}
+.err{background:#8b1e1e}.ok{background:#1f6b3a}
+.ready{background:var(--deep);border:1px solid var(--line);color:var(--fg)}
+.card b{display:block;margin-bottom:2px}
+.acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+button.b,select{height:38px;padding:0 14px;font:inherit;background:var(--in);color:var(--fg);border:1px solid var(--line);cursor:pointer}
+h2{margin:0 0 8px;font-size:20px}
+.set{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+input[type=checkbox]{appearance:none;width:42px;height:22px;margin:0;position:relative;border:1px solid var(--line);background:var(--in);cursor:pointer}
+input[type=checkbox]::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--mut)}
+input[type=checkbox]:checked::after{left:22px;background:var(--fg)}
+.store{background:#5865F2;color:#fff;padding:32px;text-align:center}
+.store h2{margin:0}.store p{margin:6px 0 0;font-size:18px}
+.store button{margin-top:20px;padding:10px 32px;border:0;background:#fff;color:#000;font:inherit;cursor:pointer}
+@media(max-width:600px){nav{width:56px}nav h1,nav span{display:none}}
+</style></head><body>
+<nav>
+<div class="grip" id="grip"></div>
+<h1>YouXNG</h1>
+<button class="on" data-t="home"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 0L0 6V8H1V15H4V10H7V15H15V8H16V6L14 4.5V1H11V2.25L8 0ZM9 10H12V13H9V10Z" fill="currentColor"/></svg><span>Home</span></button>
+<button data-t="updates"><svg viewBox="0 0 24 24" fill="none"><path d="M17 17H17.01M15.6 14H18C18.9319 14 19.3978 14 19.7654 14.1522C20.2554 14.3552 20.6448 14.7446 20.8478 15.2346C21 15.6022 21 16.0681 21 17C21 17.9319 21 18.3978 20.8478 18.7654C20.6448 19.2554 20.2554 19.6448 19.7654 19.8478C19.3978 20 18.9319 20 18 20H6C5.06812 20 4.60218 20 4.23463 19.8478C3.74458 19.6448 3.35523 19.2554 3.15224 18.7654C3 18.3978 3 17.9319 3 17C3 16.0681 3 15.6022 3.15224 15.2346C3.35523 14.7446 3.74458 14.3552 4.23463 14.1522C4.60218 14 5.06812 14 6 14H8.4M12 15V4M12 4L15 7M12 4L9 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Updates</span></button>
+<button data-t="settings"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7848 0.449982C13.8239 0.449982 14.7167 1.16546 14.9122 2.15495L14.9991 2.59495C15.3408 4.32442 17.1859 5.35722 18.9016 4.7794L19.3383 4.63233C20.3199 4.30175 21.4054 4.69358 21.9249 5.56605L22.7097 6.88386C23.2293 7.75636 23.0365 8.86366 22.2504 9.52253L21.9008 9.81555C20.5267 10.9672 20.5267 13.0328 21.9008 14.1844L22.2504 14.4774C23.0365 15.1363 23.2293 16.2436 22.7097 17.1161L21.925 18.4339C21.4054 19.3064 20.3199 19.6982 19.3382 19.3676L18.9017 19.2205C17.1859 18.6426 15.3408 19.6754 14.9991 21.405L14.9122 21.845C14.7167 22.8345 13.8239 23.55 12.7848 23.55H11.2152C10.1761 23.55 9.28331 22.8345 9.08781 21.8451L9.00082 21.4048C8.65909 19.6754 6.81395 18.6426 5.09822 19.2205L4.66179 19.3675C3.68016 19.6982 2.59465 19.3063 2.07505 18.4338L1.2903 17.1161C0.770719 16.2436 0.963446 15.1363 1.74956 14.4774L2.09922 14.1844C3.47324 13.0327 3.47324 10.9672 2.09922 9.8156L1.74956 9.52254C0.963446 8.86366 0.77072 7.75638 1.2903 6.8839L2.07508 5.56608C2.59466 4.69359 3.68014 4.30176 4.66176 4.63236L5.09831 4.77939C6.81401 5.35722 8.65909 4.32449 9.00082 2.59506L9.0878 2.15487C9.28331 1.16542 10.176 0.449982 11.2152 0.449982H12.7848ZM12 15.3C13.8225 15.3 15.3 13.8225 15.3 12C15.3 10.1774 13.8225 8.69998 12 8.69998C10.1774 8.69998 8.69997 10.1774 8.69997 12C8.69997 13.8225 10.1774 15.3 12 15.3Z" fill="currentColor"/></svg><span>Settings</span></button>
+<button data-t="store"><svg viewBox="0 0 24 24"><path d="M4.46785 10.2658C4.47574 10.3372 4.48376 10.4094 4.49187 10.4823L4.61751 11.6131C4.7057 12.4072 4.78218 13.0959 4.91562 13.6455C5.05917 14.2367 5.29582 14.7937 5.78931 15.2354C6.28281 15.6771 6.86251 15.8508 7.46598 15.9281C8.02694 16.0001 8.71985 16 9.51887 16H14.8723C15.4201 16 15.9036 16 16.3073 15.959C16.7448 15.9146 17.1698 15.8162 17.5785 15.5701C17.9872 15.324 18.2731 14.9944 18.5171 14.6286C18.7422 14.291 18.9684 13.8637 19.2246 13.3797L21.7141 8.67734C22.5974 7.00887 21.3879 4.99998 19.5 4.99998L9.39884 4.99998C8.41604 4.99993 7.57525 4.99988 6.90973 5.09287C6.5729 5.13994 6.24284 5.21529 5.93326 5.34375L5.78941 4.04912C5.65979 2.88255 4.67375 2 3.5 2H3C2.44772 2 2 2.44771 2 3C2 3.55228 2.44772 4 3 4H3.5C3.65465 4 3.78456 4.11628 3.80164 4.26998L4.46785 10.2658Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14 19.5C14 18.1193 15.1193 17 16.5 17C17.8807 17 19 18.1193 19 19.5C19 20.8807 17.8807 22 16.5 22C15.1193 22 14 20.8807 14 19.5Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M5 19.5C5 18.1193 6.11929 17 7.5 17C8.88071 17 10 18.1193 10 19.5C10 20.8807 8.88071 22 7.5 22C6.11929 22 5 20.8807 5 19.5Z" fill="currentColor"/></svg><span>Store</span></button>
+</nav>
+<main>
+<section id="home" class="on">
+ <div class="title">YouXNG</div>
+ <div class="row"><input type="text" id="url" placeholder="youtube.com/..." autocomplete="off" spellcheck="false">
+ <button id="go" aria-label="Send"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" fill="currentColor" d="M1.513 1.96a1.374 1.374 0 011.499-.21l19.335 9.215a1.146 1.146 0 010 2.07L3.012 22.25a1.374 1.374 0 01-1.947-1.46L2.49 12 1.065 3.21a1.374 1.374 0 01.448-1.25zm2.375 10.79l-1.304 8.042L21.031 12 2.584 3.208l1.304 8.042h7.362a.75.75 0 010 1.5H3.888z"/></svg></button></div>
+ <div id="msg" class="card" hidden></div>
+</section>
+<section id="updates"><h2>Updates</h2><div id="upd"></div></section>
+<section id="settings"><h2>Settings</h2>
+ <div class="set"><label for="dark">Dark mode</label><input type="checkbox" id="dark"></div>
+ <div class="set"><label for="res">Hardcode Resolution</label><select id="res"><option value="choose">Choose</option><option value="best">Best</option><option value="2160">2160p</option><option value="1440">1440p</option><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option><option value="360">360p</option></select></div>
+ <div class="set"><label for="type">Hardcode Type</label><select id="type"><option value="manual">Manual</option><option value="mp4">MP4</option><option value="mp3">MP3</option></select></div>
+ <div class="set"><label for="name">File name</label><select id="name"><option value="title">Video title</option><option value="hard">youxng-video</option></select></div>
+ <div class="set"><label for="gap">Sidebar Gap</label><select id="gap"><option value="close">Close</option><option value="default">Default</option><option value="huge">Huge</option></select></div>
+ <div class="set"><label for="theme" class="lbl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3L14.0357 8.16153C14.2236 8.63799 14.3175 8.87622 14.4614 9.0771C14.5889 9.25516 14.7448 9.41106 14.9229 9.53859C15.1238 9.68245 15.362 9.77641 15.8385 9.96432L21 12L15.8385 14.0357C15.362 14.2236 15.1238 14.3175 14.9229 14.4614C14.7448 14.5889 14.5889 14.7448 14.4614 14.9229C14.3175 15.1238 14.2236 15.362 14.0357 15.8385L12 21L9.96432 15.8385C9.77641 15.362 9.68245 15.1238 9.53859 14.9229C9.41106 14.7448 9.25516 14.5889 9.0771 14.4614C8.87622 14.3175 8.63799 14.2236 8.16153 14.0357L3 12L8.16153 9.96432C8.63799 9.77641 8.87622 9.68245 9.0771 9.53859C9.25516 9.41106 9.41106 9.25516 9.53859 9.0771C9.68245 8.87622 9.77641 8.63799 9.96432 8.16153L12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom Themes</label><select id="theme"><option value="default">Default</option><option value="custom">Custom</option></select></div>
+</section>
+<section id="store"><div class="store"><h2>YouXNG+</h2><p>$2/mo</p><button id="buy">Purchase</button>
+ <ul><li>Support the development</li><li>Custom Themes</li><li>Early access to new features</li><li>More settings</li></ul></div></section>
+</main>
+<div id="modal" hidden><div class="box"><h2>This requires YouXNG+</h2><button class="b" id="mclose">Close</button></div></div>
+<script>
+const $=s=>document.querySelector(s);
+const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',...JSON.parse(localStorage.getItem('youxng')||'{}')};
+const save=()=>{localStorage.setItem('youxng',JSON.stringify(cfg));document.documentElement.style.setProperty('--gap',{close:'0px',default:'22px',huge:'56px'}[cfg.gap]||'22px');document.documentElement.toggleAttribute('data-dark',cfg.dark);document.documentElement.style.setProperty('--nw',cfg.navw+'px')};
+save();
+$('#grip').onpointerdown=e=>{
+ e.preventDefault();document.body.style.userSelect='none';document.body.style.cursor='col-resize';
+ const move=m=>{cfg.navw=Math.min(400,Math.max(56,m.clientX));document.documentElement.style.setProperty('--nw',cfg.navw+'px')};
+ const up=()=>{removeEventListener('pointermove',move);removeEventListener('pointerup',up);document.body.style.userSelect=document.body.style.cursor='';save()};
+ addEventListener('pointermove',move);addEventListener('pointerup',up);
+};
+$('#dark').checked=cfg.dark;
+for(const k of ['res','type','name','gap']) $('#'+k).value=cfg[k];
+$('#dark').onchange=e=>{cfg.dark=e.target.checked;save()};
+for(const k of ['res','type','name','gap']) $('#'+k).onchange=e=>{cfg[k]=e.target.value;save()};
+$('#theme').onchange=e=>{if(e.target.value==='custom'){$('#modal').hidden=false;e.target.value='default'}};
+$('#mclose').onclick=()=>$('#modal').hidden=true;
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('nav button,section').forEach(x=>x.classList.remove('on'));
+ b.classList.add('on');$('#'+b.dataset.t).classList.add('on');
+ if(b.dataset.t==='updates')updates();
+});
+
+const t=(s,tag='div')=>Object.assign(document.createElement(tag),{textContent:s});
+const short=s=>s.length>15?s.slice(0,15)+'...':s;
+const msg=$('#msg'),url=$('#url');
+function show(cls,...kids){msg.className='card '+cls;msg.replaceChildren(...kids);msg.hidden=false}
+['focus','click','input'].forEach(e=>url.addEventListener(e,()=>msg.classList.contains('err')&&(msg.hidden=true)));
+async function post(p,body){
+ const r=await fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ const j=await r.json();if(!r.ok)throw new Error(j.error||'Something went wrong.');return j}
+
+let busy=false,cur;
+async function go(){
+ if(busy)return;
+ const v=url.value.trim();
+ if(!/youtube\.com|youtu\.be/i.test(v))return show('err',t('Please add a YouTube link!'));
+ busy=true;show('ok',t('Finding video...'));
+ try{
+  cur=await post('/api/info',{url:v});busy=false;
+  if(cfg.type==='manual')ready();
+  else dl(cfg.type,cfg.res==='choose'?'best':cfg.res);
+ }catch(e){busy=false;show('err',t(e.message))}
+}
+async function dl(type,res){
+ busy=true;show('ok',t("Downloading '"+short(cur.title)+"'"));
+ try{
+  const j=await post('/api/prepare',{url:cur.url,type,res,name:cfg.name});
+  Object.assign(document.createElement('a'),{href:'/api/file/'+j.token}).click();
+  busy=false;ready();
+ }catch(e){busy=false;show('err',t(e.message))}
+}
+function ready(){
+ const q=document.createElement('select');
+ q.append(new Option('Best available','best'),...cur.heights.map(h=>new Option(h+'p',h)));
+ const res=()=>cfg.res==='choose'?q.value:cfg.res;
+ const b=(l,k)=>Object.assign(document.createElement('button'),{className:'b',textContent:l,onclick:()=>!busy&&dl(k,res())});
+ const acts=t('');acts.className='acts';
+ if(cfg.res==='choose')acts.append(q);
+ acts.append(b('Download MP4','mp4'),b('Download MP3','mp3'));
+ show('ready',t('Download ready!','b'),t('Click one of the buttons to download the video.'),acts);
+}
+$('#go').onclick=go;
+url.addEventListener('keydown',e=>e.key==='Enter'&&go());
+
+async function updates(){
+ const box=$('#upd');box.replaceChildren(t('Checking...'));
+ try{
+  const d=await (await fetch('/api/updates')).json();
+  box.replaceChildren(...[['YouXNG',d.app],['yt-dlp',d.ytdlp]].map(([n,x])=>{
+   const c=t('');c.className='card ready';
+   c.append(t(n,'b'),t(x.error?"Couldn't check for updates.":x.new?`New version available! (${x.current} → ${x.latest})`:"You're up to date. Current Version: "+x.current));
+   return c}));
+ }catch{box.replaceChildren(t("Couldn't check for updates."))}
+}
+$('#buy').onclick=e=>{
+ const b=e.target;if(b.dataset.w)return;b.dataset.w=1;b.textContent='Coming Soon!';
+ setTimeout(()=>{b.textContent='Purchase';delete b.dataset.w},2000)};
+</script></body></html>
