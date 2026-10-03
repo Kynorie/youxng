@@ -68,7 +68,7 @@ python youxng.py
 Your browser should open by itself. If it does not, go to:
 
 ```
-http://127.0.0.1:8080
+http://127.0.0.1:3003
 ```
 
 To stop the app, go back to the terminal and press `Ctrl+C`.
