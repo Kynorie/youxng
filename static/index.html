@@ -11,6 +11,8 @@ nav h1{font-size:18px;margin:0 16px 12px}
 .lbl{display:flex;align-items:center;gap:8px}
 .store ul{display:table;margin:24px auto 0;padding-left:20px;text-align:left}
 .store li{margin:4px 0}
+.store+.store{margin-top:16px}
+.store a{display:inline-block;margin-top:20px;padding:10px 32px;background:#fff;color:#000;font:inherit;text-decoration:none}
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center}
 .box{background:var(--bg);border:1px solid var(--line);padding:28px 36px;text-align:center}
 .box h2{margin-bottom:18px}
@@ -69,14 +71,16 @@ input[type=checkbox]:checked::after{left:22px;background:var(--fg)}
  <div class="set"><label for="gap">Sidebar Gap</label><select id="gap"><option value="close">Close</option><option value="default">Default</option><option value="huge">Huge</option></select></div>
  <div class="set"><label for="theme" class="lbl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3L14.0357 8.16153C14.2236 8.63799 14.3175 8.87622 14.4614 9.0771C14.5889 9.25516 14.7448 9.41106 14.9229 9.53859C15.1238 9.68245 15.362 9.77641 15.8385 9.96432L21 12L15.8385 14.0357C15.362 14.2236 15.1238 14.3175 14.9229 14.4614C14.7448 14.5889 14.5889 14.7448 14.4614 14.9229C14.3175 15.1238 14.2236 15.362 14.0357 15.8385L12 21L9.96432 15.8385C9.77641 15.362 9.68245 15.1238 9.53859 14.9229C9.41106 14.7448 9.25516 14.5889 9.0771 14.4614C8.87622 14.3175 8.63799 14.2236 8.16153 14.0357L3 12L8.16153 9.96432C8.63799 9.77641 8.87622 9.68245 9.0771 9.53859C9.25516 9.41106 9.41106 9.25516 9.53859 9.0771C9.68245 8.87622 9.77641 8.63799 9.96432 8.16153L12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom Themes</label><select id="theme"><option value="default">Default</option><option value="custom">Custom</option></select></div>
 </section>
-<section id="store"><div class="store"><h2>YouXNG+</h2><p>$2/mo</p><button id="buy">Purchase</button>
- <ul><li>Support the development</li><li>Custom Themes</li><li>Early access to new features</li><li>More settings</li></ul></div></section>
+<section id="store"><div class="store"><h2>YouXNG+</h2><p>$2/mo</p><button class="soon">Purchase</button>
+ <ul><li>Support the development</li><li>Custom Themes</li><li>Early access to new features</li><li>More settings</li></ul></div>
+ <div class="store"><h2>Ko-Fi</h2><a href="https://ko-fi.com/kynorie" target="_blank" rel="noopener">Donate</a>
+ <ul><li>Support development by donating how much money you want!</li></ul></div></section>
 </main>
 <div id="modal" hidden><div class="box"><h2>This requires YouXNG+</h2><button class="b" id="mclose">Close</button></div></div>
 <script>
 const $=s=>document.querySelector(s);
-const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',...JSON.parse(localStorage.getItem('youxng')||'{}')};
-const save=()=>{localStorage.setItem('youxng',JSON.stringify(cfg));document.documentElement.style.setProperty('--gap',{close:'0px',default:'22px',huge:'56px'}[cfg.gap]||'22px');document.documentElement.toggleAttribute('data-dark',cfg.dark);document.documentElement.style.setProperty('--nw',cfg.navw+'px')};
+const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',...(()=>{try{return JSON.parse(localStorage.getItem('youxng')||'{}')}catch{return{}}})()};
+const save=()=>{try{localStorage.setItem('youxng',JSON.stringify(cfg))}catch{}document.documentElement.style.setProperty('--gap',{close:'0px',default:'22px',huge:'56px'}[cfg.gap]||'22px');document.documentElement.toggleAttribute('data-dark',cfg.dark);document.documentElement.style.setProperty('--nw',cfg.navw+'px')};
 save();
 $('#grip').onpointerdown=e=>{
  e.preventDefault();document.body.style.userSelect='none';document.body.style.cursor='col-resize';
@@ -149,7 +153,7 @@ async function updates(){
    return c}));
  }catch{box.replaceChildren(t("Couldn't check for updates."))}
 }
-$('#buy').onclick=e=>{
- const b=e.target;if(b.dataset.w)return;b.dataset.w=1;b.textContent='Coming Soon!';
- setTimeout(()=>{b.textContent='Purchase';delete b.dataset.w},2000)};
+document.querySelectorAll('.soon').forEach(b=>b.onclick=()=>{
+ if(b.dataset.w)return;const old=b.textContent;b.dataset.w=1;b.textContent='Coming Soon!';
+ setTimeout(()=>{b.textContent=old;delete b.dataset.w},2000)});
 </script></body></html>
