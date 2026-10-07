@@ -1,16 +1,8 @@
 # YouXNG
 
-YouXNG is a simple YouTube video downloader that runs on your own computer. It uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) to do the downloading, and it shows a clean page in your web browser.
+YouXNG is a simple video downloader that runs on your own computer. It works with YouTube and Twitter (X). It uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) to do the downloading, and it shows a clean page in your web browser.
 
 Nothing is sent to any server of ours. The app only runs on your machine, and only you can open it.
-
-## Features
-
-- Paste a YouTube link and download the video as MP4 or MP3
-- Pick a video resolution, or set one in the settings
-- Save files with the video title or with a fixed name
-- Dark mode, and a sidebar you can resize by dragging its edge
-- Update checker for YouXNG and yt-dlp
 
 ## What you need
 
@@ -73,22 +65,34 @@ http://127.0.0.1:3003
 
 To stop the app, go back to the terminal and press `Ctrl+C`.
 
+Next time, you only need to run `source venv/bin/activate` and then `python youxng.py` from the project folder.
+
 ## How to use it
 
 1. Open the **Home** tab.
-2. Paste a YouTube link into the box and press Enter, or click the arrow button.
-3. When you see "Download ready!", click **Download MP4** or **Download MP3**.
+2. Click the platform button next to the arrow button. Choose **YouTube** or **Twitter**.
+3. Paste a link into the box and press Enter, or click the arrow button.
+4. When you see "Download ready!", click **Download MP4** or **Download MP3**.
+
+## Platforms
+
+YouXNG checks that your link matches the platform you picked. If it does not match, you will see an error.
+
+- **YouTube**: links with `youtube.com/` or `youtu.be`
+- **Twitter (X)**: links with `twitter.com/` or `x.com/`
+
+Twitter links only work for posts that have a video. Some posts, like protected or age-restricted ones, may not download because X can ask for a login.
 
 ## Tabs
 
 - **Home**: the main downloader.
 - **Updates**: checks if there is a new version of YouXNG, and a new version of yt-dlp.
-- **Settings**: dark mode, hardcoded resolution, hardcoded type, file name, and sidebar gap.
+- **Settings**: dark mode, default platform, hardcoded resolution, hardcoded type, file name, and sidebar gap.
 - **Store**: a preview of YouXNG+. It is not for sale yet.
 
 ## Keeping yt-dlp up to date
 
-YouTube changes often, so yt-dlp needs updates to keep working. If downloads stop working, update it:
+YouTube and Twitter change often, so yt-dlp needs updates to keep working. If downloads stop working, update it:
 
 ```
 pip install -U yt-dlp
@@ -106,5 +110,6 @@ youxng/
 ## Good to know
 
 - Your settings are saved in your browser, not in a file.
+- The platform you pick in the dropdown is only kept until you close the page. To change it for good, use the **Default Platform** setting.
 - The app only listens on `127.0.0.1`, so other devices on your network cannot reach it.
-- Only download videos that you have the right to download.
+- Only download videos that you have the right to download. Do not share other people's videos without their permission.
