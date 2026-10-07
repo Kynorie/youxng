@@ -14,12 +14,23 @@ app = Flask(__name__)
 JOBS = {}
 
 
-def clean_url(raw):
+PLATFORMS = {
+    "youtube": ("youtu.be", "youtube.com"),
+    "twitter": ("twitter.com", "x.com"),
+}
+NAMES = {"youtube": "YouTube", "twitter": "Twitter"}
+
+
+def get_platform(value):
+    return value if value in PLATFORMS else "youtube"
+
+
+def clean_url(raw, platform="youtube"):
     raw = (raw or "").strip()
     if not re.match(r"^https?://", raw, re.I):
         raw = "https://" + raw
     host = (urlparse(raw).hostname or "").lower()
-    ok = host == "youtu.be" or host == "youtube.com" or host.endswith(".youtube.com")
+    ok = any(host == d or host.endswith("." + d) for d in PLATFORMS[get_platform(platform)])
     return raw if ok else None
 
 
@@ -40,9 +51,11 @@ def index():
 
 @app.post("/api/info")
 def info():
-    url = clean_url((request.json or {}).get("url"))
+    j = request.json or {}
+    platform = get_platform(j.get("platform"))
+    url = clean_url(j.get("url"), platform)
     if not url:
-        return jsonify(error="Please add a YouTube link!"), 400
+        return jsonify(error=f"Please add a {NAMES[platform]} link!"), 400
     try:
         with yt_dlp.YoutubeDL({"quiet": True, "noplaylist": True}) as y:
             d = y.extract_info(url, download=False)
@@ -56,9 +69,10 @@ def info():
 @app.post("/api/prepare")
 def prepare():
     j = request.json or {}
-    url = clean_url(j.get("url"))
+    platform = get_platform(j.get("platform"))
+    url = clean_url(j.get("url"), platform)
     if not url:
-        return jsonify(error="Please add a YouTube link!"), 400
+        return jsonify(error=f"Please add a {NAMES[platform]} link!"), 400
     kind, res = ("mp3" if j.get("type") == "mp3" else "mp4"), str(j.get("res", "best"))
     tmp = tempfile.mkdtemp(prefix="youxng-")
     opts = {"quiet": True, "noplaylist": True, "outtmpl": os.path.join(tmp, "out.%(ext)s")}
