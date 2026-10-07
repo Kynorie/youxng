@@ -29,6 +29,13 @@ section.on{display:block}
 .row{display:flex}
 input[type=text]{flex:1;height:46px;padding:0 14px;font:16px inherit;background:var(--in);color:var(--fg);border:1px solid var(--line);outline:0}
 input[type=text]:focus{border-color:var(--fg)}
+#plat{position:relative;display:flex}
+#pbtn{display:flex;align-items:center;gap:4px;height:46px;padding:0 10px;border:1px solid var(--line);border-left:0;background:var(--in);color:var(--fg);cursor:pointer;font:inherit}
+#pbtn svg{width:22px;height:22px}
+#pbtn::after{content:"";border:4px solid transparent;border-top-color:var(--mut);border-bottom:0}
+#pmenu{position:absolute;top:100%;right:0;z-index:5;min-width:150px;background:var(--in);border:1px solid var(--line);border-top:0}
+#pmenu button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:0;background:none;color:var(--fg);font:inherit;cursor:pointer;text-align:left}
+#pmenu button:hover,#pmenu button.on{background:var(--deep)}
 #go{width:46px;height:46px;border:1px solid var(--line);border-left:0;background:var(--in);color:var(--fg);cursor:pointer;display:grid;place-items:center}
 #go svg{width:22px;height:22px}
 .card{margin-top:12px;padding:14px 16px;color:#fff}
@@ -59,12 +66,18 @@ input[type=checkbox]:checked::after{left:22px;background:var(--fg)}
 <section id="home" class="on">
  <div class="title">YouXNG</div>
  <div class="row"><input type="text" id="url" placeholder="youtube.com/..." autocomplete="off" spellcheck="false">
+ <div id="plat"><button id="pbtn" aria-label="Platform" aria-haspopup="true" aria-expanded="false"></button>
+  <div id="pmenu" hidden>
+   <button data-p="youtube"><svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="red" d="M14.712 4.633a1.754 1.754 0 00-1.234-1.234C12.382 3.11 8 3.11 8 3.11s-4.382 0-5.478.289c-.6.161-1.072.634-1.234 1.234C1 5.728 1 8 1 8s0 2.283.288 3.367c.162.6.635 1.073 1.234 1.234C3.618 12.89 8 12.89 8 12.89s4.382 0 5.478-.289a1.754 1.754 0 001.234-1.234C15 10.272 15 8 15 8s0-2.272-.288-3.367z"></path><path fill="#ffffff" d="M6.593 10.11l3.644-2.098-3.644-2.11v4.208z"></path></svg><span>YouTube</span></button>
+   <button data-p="twitter"><svg viewBox="0 -4 48 48" xmlns="http://www.w3.org/2000/svg" fill="none"><g fill="none" fill-rule="evenodd"><g transform="translate(-300.000000, -164.000000)" fill="#00AAEC"><path d="M348,168.735283 C346.236309,169.538462 344.337383,170.081618 342.345483,170.324305 C344.379644,169.076201 345.940482,167.097147 346.675823,164.739617 C344.771263,165.895269 342.666667,166.736006 340.418384,167.18671 C338.626519,165.224991 336.065504,164 333.231203,164 C327.796443,164 323.387216,168.521488 323.387216,174.097508 C323.387216,174.88913 323.471738,175.657638 323.640782,176.397255 C315.456242,175.975442 308.201444,171.959552 303.341433,165.843265 C302.493397,167.339834 302.008804,169.076201 302.008804,170.925244 C302.008804,174.426869 303.747139,177.518238 306.389857,179.329722 C304.778306,179.280607 303.256911,178.821235 301.9271,178.070061 L301.9271,178.194294 C301.9271,183.08848 305.322064,187.17082 309.8299,188.095341 C309.004402,188.33225 308.133826,188.450704 307.235077,188.450704 C306.601162,188.450704 305.981335,188.390033 305.381229,188.271578 C306.634971,192.28169 310.269414,195.2026 314.580032,195.280607 C311.210424,197.99061 306.961789,199.605634 302.349709,199.605634 C301.555203,199.605634 300.769149,199.559408 300,199.466956 C304.358514,202.327194 309.53689,204 315.095615,204 C333.211481,204 343.114633,188.615385 343.114633,175.270495 C343.114633,174.831347 343.106181,174.392199 343.089276,173.961719 C345.013559,172.537378 346.684275,170.760563 348,168.735283"></path></g></g></svg><span>Twitter</span></button>
+  </div></div>
  <button id="go" aria-label="Send"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" fill="currentColor" d="M1.513 1.96a1.374 1.374 0 011.499-.21l19.335 9.215a1.146 1.146 0 010 2.07L3.012 22.25a1.374 1.374 0 01-1.947-1.46L2.49 12 1.065 3.21a1.374 1.374 0 01.448-1.25zm2.375 10.79l-1.304 8.042L21.031 12 2.584 3.208l1.304 8.042h7.362a.75.75 0 010 1.5H3.888z"/></svg></button></div>
  <div id="msg" class="card" hidden></div>
 </section>
 <section id="updates"><h2>Updates</h2><div id="upd"></div></section>
 <section id="settings"><h2>Settings</h2>
  <div class="set"><label for="dark">Dark mode</label><input type="checkbox" id="dark"></div>
+ <div class="set"><label for="plt">Default Platform</label><select id="plt"><option value="youtube">YouTube</option><option value="twitter">Twitter</option></select></div>
  <div class="set"><label for="res">Hardcode Resolution</label><select id="res"><option value="choose">Choose</option><option value="best">Best</option><option value="2160">2160p</option><option value="1440">1440p</option><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option><option value="360">360p</option></select></div>
  <div class="set"><label for="type">Hardcode Type</label><select id="type"><option value="manual">Manual</option><option value="mp4">MP4</option><option value="mp3">MP3</option></select></div>
  <div class="set"><label for="name">File name</label><select id="name"><option value="title">Video title</option><option value="hard">youxng-video</option></select></div>
@@ -79,7 +92,7 @@ input[type=checkbox]:checked::after{left:22px;background:var(--fg)}
 <div id="modal" hidden><div class="box"><h2>This requires YouXNG+</h2><button class="b" id="mclose">Close</button></div></div>
 <script>
 const $=s=>document.querySelector(s);
-const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',...(()=>{try{return JSON.parse(localStorage.getItem('youxng')||'{}')}catch{return{}}})()};
+const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',platform:'youtube',...(()=>{try{return JSON.parse(localStorage.getItem('youxng')||'{}')}catch{return{}}})()};
 const save=()=>{try{localStorage.setItem('youxng',JSON.stringify(cfg))}catch{}document.documentElement.style.setProperty('--gap',{close:'0px',default:'22px',huge:'56px'}[cfg.gap]||'22px');document.documentElement.toggleAttribute('data-dark',cfg.dark);document.documentElement.style.setProperty('--nw',cfg.navw+'px')};
 save();
 $('#grip').onpointerdown=e=>{
@@ -89,9 +102,11 @@ $('#grip').onpointerdown=e=>{
  addEventListener('pointermove',move);addEventListener('pointerup',up);
 };
 $('#dark').checked=cfg.dark;
+$('#plt').value=cfg.platform;
 for(const k of ['res','type','name','gap']) $('#'+k).value=cfg[k];
 $('#dark').onchange=e=>{cfg.dark=e.target.checked;save()};
 for(const k of ['res','type','name','gap']) $('#'+k).onchange=e=>{cfg[k]=e.target.value;save()};
+$('#plt').onchange=e=>{cfg.platform=e.target.value;save();pick(cfg.platform)};
 $('#theme').onchange=e=>{if(e.target.value==='custom'){$('#modal').hidden=false;e.target.value='default'}};
 $('#mclose').onclick=()=>$('#modal').hidden=true;
 
@@ -104,6 +119,24 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
 const t=(s,tag='div')=>Object.assign(document.createElement(tag),{textContent:s});
 const short=s=>s.length>15?s.slice(0,15)+'...':s;
 const msg=$('#msg'),url=$('#url');
+const P={
+ youtube:{name:'YouTube',ph:'youtube.com/...',re:/youtube\.com\/|youtu\.be/i,icon:$('#pmenu [data-p=youtube] svg').outerHTML},
+ twitter:{name:'Twitter',ph:'x.com/...',re:/(twitter|x)\.com\//i,icon:$('#pmenu [data-p=twitter] svg').outerHTML}
+};
+let plat=P[cfg.platform]?cfg.platform:'youtube';
+function pick(k){
+ plat=P[k]?k:'youtube';
+ $('#pbtn').innerHTML=P[plat].icon;$('#pbtn').title=P[plat].name;
+ url.placeholder=P[plat].ph;
+ document.querySelectorAll('#pmenu button').forEach(b=>b.classList.toggle('on',b.dataset.p===plat));
+ msg.classList.contains('err')&&(msg.hidden=true);
+}
+const menu=$('#pmenu'),setMenu=o=>{menu.hidden=!o;$('#pbtn').setAttribute('aria-expanded',o)};
+$('#pbtn').onclick=e=>{e.stopPropagation();setMenu(menu.hidden)};
+menu.querySelectorAll('button').forEach(b=>b.onclick=()=>{pick(b.dataset.p);setMenu(false);url.focus()});
+addEventListener('click',()=>setMenu(false));
+addEventListener('keydown',e=>e.key==='Escape'&&setMenu(false));
+pick(plat);
 function show(cls,...kids){msg.className='card '+cls;msg.replaceChildren(...kids);msg.hidden=false}
 ['focus','click','input'].forEach(e=>url.addEventListener(e,()=>msg.classList.contains('err')&&(msg.hidden=true)));
 async function post(p,body){
@@ -114,10 +147,10 @@ let busy=false,cur;
 async function go(){
  if(busy)return;
  const v=url.value.trim();
- if(!/youtube\.com|youtu\.be/i.test(v))return show('err',t('Please add a YouTube link!'));
+ if(!P[plat].re.test(v))return show('err',t('Please add a '+P[plat].name+' link!'));
  busy=true;show('ok',t('Finding video...'));
  try{
-  cur=await post('/api/info',{url:v});busy=false;
+  cur=await post('/api/info',{url:v,platform:plat});cur.platform=plat;busy=false;
   if(cfg.type==='manual')ready();
   else dl(cfg.type,cfg.res==='choose'?'best':cfg.res);
  }catch(e){busy=false;show('err',t(e.message))}
@@ -125,7 +158,7 @@ async function go(){
 async function dl(type,res){
  busy=true;show('ok',t("Downloading '"+short(cur.title)+"'"));
  try{
-  const j=await post('/api/prepare',{url:cur.url,type,res,name:cfg.name});
+  const j=await post('/api/prepare',{url:cur.url,platform:cur.platform,type,res,name:cfg.name});
   Object.assign(document.createElement('a'),{href:'/api/file/'+j.token}).click();
   busy=false;ready();
  }catch(e){busy=false;show('err',t(e.message))}
