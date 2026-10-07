@@ -6,7 +6,7 @@ import yt_dlp
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from yt_dlp.version import __version__ as YTDLP_VERSION
 
-VERSION = "0.1.0"
+VERSION = "0.3.0"
 REPO = "kynorie/youxng"
 HOST, PORT = "127.0.0.1", 3003
 
