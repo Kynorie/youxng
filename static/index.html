@@ -11,11 +11,7 @@ nav h1{font-size:18px;margin:0 16px 12px}
 .lbl{display:flex;align-items:center;gap:8px}
 .store ul{display:table;margin:24px auto 0;padding-left:20px;text-align:left}
 .store li{margin:4px 0}
-.store+.store{margin-top:16px}
 .store a{display:inline-block;margin-top:20px;padding:10px 32px;background:#fff;color:#000;font:inherit;text-decoration:none}
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center}
-.box{background:var(--bg);border:1px solid var(--line);padding:28px 36px;text-align:center}
-.box h2{margin-bottom:18px}
 .grip{position:absolute;top:0;right:0;width:6px;height:100%;cursor:col-resize}
 .grip:hover{background:var(--line)}
 .title{text-align:center;font-size:44px;font-weight:800;font-style:italic;margin-bottom:18px}
@@ -50,10 +46,22 @@ input[type=checkbox]{appearance:none;width:42px;height:22px;margin:0;position:re
 input[type=checkbox]::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--mut)}
 input[type=checkbox]:checked::after{left:22px;background:var(--fg)}
 .store{background:#5865F2;color:#fff;padding:32px;text-align:center}
-.store h2{margin:0}.store p{margin:6px 0 0;font-size:18px}
-.store button{margin-top:20px;padding:10px 32px;border:0;background:#fff;color:#000;font:inherit;cursor:pointer}
+.store h2{margin:0}
+.promo{margin:14px 0 0;text-align:center;font-size:13px;opacity:.5}
+.adv{margin-top:20px;border:1px solid var(--line);background:var(--in)}
+.adv summary{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;list-style:none;font-weight:600}
+.adv summary::-webkit-details-marker{display:none}
+.adv summary::after{content:"";border:5px solid transparent;border-top-color:var(--mut);border-bottom:0;transition:transform .15s}
+.adv[open] summary::after{transform:rotate(180deg)}
+.adv .body{padding:0 16px 4px;border-top:1px solid var(--line)}
+.adv .set:last-child{border-bottom:0}
+.pair{display:flex;gap:8px}
+.tag{padding:1px 6px;border:1px solid var(--mut);color:var(--mut);font-size:11px}
+.set input[type=text]{flex:none;width:210px;height:34px;padding:0 10px;font-size:14px}
+input[type=color]{width:46px;height:32px;padding:0;border:1px solid var(--line);background:none;cursor:pointer}
 @media(max-width:600px){nav{width:56px}nav h1,nav span{display:none}}
 </style></head><body>
+<svg style="position:absolute;width:0;height:0" aria-hidden="true"><defs><linearGradient id="ng-grad" x1="50%" y1="0%" x2="50%" y2="153.355%"><stop stop-color="#FF9D00" offset="0%"/><stop stop-color="#FF0B33" offset="100%"/></linearGradient></defs></svg>
 <nav>
 <div class="grip" id="grip"></div>
 <h1>YouXNG</h1>
@@ -72,45 +80,76 @@ input[type=checkbox]:checked::after{left:22px;background:var(--fg)}
    <button data-p="twitter"><svg viewBox="0 -4 48 48" xmlns="http://www.w3.org/2000/svg" fill="none"><g fill="none" fill-rule="evenodd"><g transform="translate(-300.000000, -164.000000)" fill="#00AAEC"><path d="M348,168.735283 C346.236309,169.538462 344.337383,170.081618 342.345483,170.324305 C344.379644,169.076201 345.940482,167.097147 346.675823,164.739617 C344.771263,165.895269 342.666667,166.736006 340.418384,167.18671 C338.626519,165.224991 336.065504,164 333.231203,164 C327.796443,164 323.387216,168.521488 323.387216,174.097508 C323.387216,174.88913 323.471738,175.657638 323.640782,176.397255 C315.456242,175.975442 308.201444,171.959552 303.341433,165.843265 C302.493397,167.339834 302.008804,169.076201 302.008804,170.925244 C302.008804,174.426869 303.747139,177.518238 306.389857,179.329722 C304.778306,179.280607 303.256911,178.821235 301.9271,178.070061 L301.9271,178.194294 C301.9271,183.08848 305.322064,187.17082 309.8299,188.095341 C309.004402,188.33225 308.133826,188.450704 307.235077,188.450704 C306.601162,188.450704 305.981335,188.390033 305.381229,188.271578 C306.634971,192.28169 310.269414,195.2026 314.580032,195.280607 C311.210424,197.99061 306.961789,199.605634 302.349709,199.605634 C301.555203,199.605634 300.769149,199.559408 300,199.466956 C304.358514,202.327194 309.53689,204 315.095615,204 C333.211481,204 343.114633,188.615385 343.114633,175.270495 C343.114633,174.831347 343.106181,174.392199 343.089276,173.961719 C345.013559,172.537378 346.684275,170.760563 348,168.735283"></path></g></g></svg><span>Twitter</span></button>
    <button data-p="tiktok"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.45095 19.7926C8.60723 18.4987 9.1379 17.7743 10.1379 17.0317C11.5688 16.0259 13.3561 16.5948 13.3561 16.5948V13.2197C13.7907 13.2085 14.2254 13.2343 14.6551 13.2966V17.6401C14.6551 17.6401 12.8683 17.0712 11.4375 18.0775C10.438 18.8196 9.90623 19.5446 9.7505 20.8385C9.74562 21.5411 9.87747 22.4595 10.4847 23.2536C10.3345 23.1766 10.1815 23.0889 10.0256 22.9905C8.68807 22.0923 8.44444 20.7449 8.45095 19.7926ZM22.0352 6.97898C21.0509 5.90039 20.6786 4.81139 20.5441 4.04639H21.7823C21.7823 4.04639 21.5354 6.05224 23.3347 8.02482L23.3597 8.05134C22.8747 7.7463 22.43 7.38624 22.0352 6.97898ZM28 10.0369V14.293C28 14.293 26.42 14.2312 25.2507 13.9337C23.6179 13.5176 22.5685 12.8795 22.5685 12.8795C22.5685 12.8795 21.8436 12.4245 21.785 12.3928V21.1817C21.785 21.6711 21.651 22.8932 21.2424 23.9125C20.709 25.246 19.8859 26.1212 19.7345 26.3001C19.7345 26.3001 18.7334 27.4832 16.9672 28.28C15.3752 28.9987 13.9774 28.9805 13.5596 28.9987C13.5596 28.9987 11.1434 29.0944 8.96915 27.6814C8.49898 27.3699 8.06011 27.0172 7.6582 26.6277L7.66906 26.6355C9.84383 28.0485 12.2595 27.9528 12.2595 27.9528C12.6779 27.9346 14.0756 27.9528 15.6671 27.2341C17.4317 26.4374 18.4344 25.2543 18.4344 25.2543C18.5842 25.0754 19.4111 24.2001 19.9423 22.8662C20.3498 21.8474 20.4849 20.6247 20.4849 20.1354V11.3475C20.5435 11.3797 21.2679 11.8347 21.2679 11.8347C21.2679 11.8347 22.3179 12.4734 23.9506 12.8889C25.1204 13.1864 26.7 13.2483 26.7 13.2483V9.91314C27.2404 10.0343 27.7011 10.0671 28 10.0369Z" fill="#EE1D52"></path><path d="M26.7009 9.91314V13.2472C26.7009 13.2472 25.1213 13.1853 23.9515 12.8879C22.3188 12.4718 21.2688 11.8337 21.2688 11.8337C21.2688 11.8337 20.5444 11.3787 20.4858 11.3464V20.1364C20.4858 20.6258 20.3518 21.8484 19.9432 22.8672C19.4098 24.2012 18.5867 25.0764 18.4353 25.2553C18.4353 25.2553 17.4337 26.4384 15.668 27.2352C14.0765 27.9539 12.6788 27.9357 12.2604 27.9539C12.2604 27.9539 9.84473 28.0496 7.66995 26.6366L7.6591 26.6288C7.42949 26.4064 7.21336 26.1717 7.01177 25.9257C6.31777 25.0795 5.89237 24.0789 5.78547 23.7934C5.78529 23.7922 5.78529 23.791 5.78547 23.7898C5.61347 23.2937 5.25209 22.1022 5.30147 20.9482C5.38883 18.9122 6.10507 17.6625 6.29444 17.3494C6.79597 16.4957 7.44828 15.7318 8.22233 15.0919C8.90538 14.5396 9.6796 14.1002 10.5132 13.7917C11.4144 13.4295 12.3794 13.2353 13.3565 13.2197V16.5948C13.3565 16.5948 11.5691 16.028 10.1388 17.0317C9.13879 17.7743 8.60812 18.4987 8.45185 19.7926C8.44534 20.7449 8.68897 22.0923 10.0254 22.991C10.1813 23.0898 10.3343 23.1775 10.4845 23.2541C10.7179 23.5576 11.0021 23.8221 11.3255 24.0368C12.631 24.8632 13.7249 24.9209 15.1238 24.3842C16.0565 24.0254 16.7586 23.2167 17.0842 22.3206C17.2888 21.7611 17.2861 21.1978 17.2861 20.6154V4.04639H20.5417C20.6763 4.81139 21.0485 5.90039 22.0328 6.97898C22.4276 7.38624 22.8724 7.7463 23.3573 8.05134C23.5006 8.19955 24.2331 8.93231 25.1734 9.38216C25.6596 9.61469 26.1722 9.79285 26.7009 9.91314Z" fill="currentColor"></path><path d="M4.48926 22.7568V22.7594L4.57004 22.9784C4.56076 22.9529 4.53074 22.8754 4.48926 22.7568Z" fill="#69C9D0"></path><path d="M10.5128 13.7916C9.67919 14.1002 8.90498 14.5396 8.22192 15.0918C7.44763 15.7332 6.79548 16.4987 6.29458 17.354C6.10521 17.6661 5.38897 18.9168 5.30161 20.9528C5.25223 22.1068 5.61361 23.2983 5.78561 23.7944C5.78543 23.7956 5.78543 23.7968 5.78561 23.798C5.89413 24.081 6.31791 25.0815 7.01191 25.9303C7.2135 26.1763 7.42963 26.4111 7.65924 26.6334C6.92357 26.1457 6.26746 25.5562 5.71236 24.8839C5.02433 24.0451 4.60001 23.0549 4.48932 22.7626C4.48919 22.7605 4.48919 22.7584 4.48932 22.7564V22.7527C4.31677 22.2571 3.95431 21.0651 4.00477 19.9096C4.09213 17.8736 4.80838 16.6239 4.99775 16.3108C5.4985 15.4553 6.15067 14.6898 6.92509 14.0486C7.608 13.4961 8.38225 13.0567 9.21598 12.7484C9.73602 12.5416 10.2778 12.3891 10.8319 12.2934C11.6669 12.1537 12.5198 12.1415 13.3588 12.2575V13.2196C12.3808 13.2349 11.4148 13.4291 10.5128 13.7916Z" fill="#69C9D0"></path><path d="M20.5438 4.04635H17.2881V20.6159C17.2881 21.1983 17.2881 21.76 17.0863 22.3211C16.7575 23.2167 16.058 24.0253 15.1258 24.3842C13.7265 24.923 12.6326 24.8632 11.3276 24.0368C11.0036 23.823 10.7187 23.5594 10.4844 23.2567C11.5962 23.8251 12.5913 23.8152 13.8241 23.341C14.7558 22.9821 15.4563 22.1734 15.784 21.2774C15.9891 20.7178 15.9864 20.1546 15.9864 19.5726V3H20.4819C20.4819 3 20.4315 3.41188 20.5438 4.04635ZM26.7002 8.99104V9.9131C26.1725 9.79263 25.6609 9.61447 25.1755 9.38213C24.2352 8.93228 23.5026 8.19952 23.3594 8.0513C23.5256 8.1559 23.6981 8.25106 23.8759 8.33629C25.0192 8.88339 26.1451 9.04669 26.7002 8.99104Z" fill="#69C9D0"></path></svg><span>TikTok</span></button>
    <button data-p="reddit"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2C8.27812 2 2 8.27812 2 16C2 23.7219 8.27812 30 16 30C23.7219 30 30 23.7219 30 16C30 8.27812 23.7219 2 16 2Z" fill="#FC471E"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M20.0193 8.90951C20.0066 8.98984 20 9.07226 20 9.15626C20 10.0043 20.6716 10.6918 21.5 10.6918C22.3284 10.6918 23 10.0043 23 9.15626C23 8.30819 22.3284 7.6207 21.5 7.6207C21.1309 7.6207 20.7929 7.7572 20.5315 7.98359L16.6362 7L15.2283 12.7651C13.3554 12.8913 11.671 13.4719 10.4003 14.3485C10.0395 13.9863 9.54524 13.7629 9 13.7629C7.89543 13.7629 7 14.6796 7 15.8103C7 16.5973 7.43366 17.2805 8.06967 17.6232C8.02372 17.8674 8 18.1166 8 18.3696C8 21.4792 11.5817 24 16 24C20.4183 24 24 21.4792 24 18.3696C24 18.1166 23.9763 17.8674 23.9303 17.6232C24.5663 17.2805 25 16.5973 25 15.8103C25 14.6796 24.1046 13.7629 23 13.7629C22.4548 13.7629 21.9605 13.9863 21.5997 14.3485C20.2153 13.3935 18.3399 12.7897 16.2647 12.7423L17.3638 8.24143L20.0193 8.90951ZM12.5 18.8815C13.3284 18.8815 14 18.194 14 17.3459C14 16.4978 13.3284 15.8103 12.5 15.8103C11.6716 15.8103 11 16.4978 11 17.3459C11 18.194 11.6716 18.8815 12.5 18.8815ZM19.5 18.8815C20.3284 18.8815 21 18.194 21 17.3459C21 16.4978 20.3284 15.8103 19.5 15.8103C18.6716 15.8103 18 16.4978 18 17.3459C18 18.194 18.6716 18.8815 19.5 18.8815ZM12.7773 20.503C12.5476 20.3462 12.2372 20.4097 12.084 20.6449C11.9308 20.8802 11.9929 21.198 12.2226 21.3548C13.3107 22.0973 14.6554 22.4686 16 22.4686C17.3446 22.4686 18.6893 22.0973 19.7773 21.3548C20.0071 21.198 20.0692 20.8802 19.916 20.6449C19.7628 20.4097 19.4524 20.3462 19.2226 20.503C18.3025 21.1309 17.1513 21.4449 16 21.4449C15.3173 21.4449 14.6345 21.3345 14 21.1137C13.5646 20.9621 13.1518 20.7585 12.7773 20.503Z" fill="white"></path></svg><span>Reddit</span></button>
+   <button data-p="soundcloud"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="#FF3A00"><path d="M16.569,39.37c-1.705-0.045-3.238,1.488-3.193,3.193c0,0,0,29.566,0,29.566 c-0.015,1.821,1.503,2.531,3.193,2.537c1.725-0.005,3.245-0.694,3.237-2.537V42.563C19.844,40.832,18.311,39.322,16.569,39.37z"/><path d="M92.322,50.873c-4.128-4.284-10.743-5.494-16.161-3.193c-0.888-13.158-12.729-24.001-25.936-23.749 c-1.924,0-3.863,0.233-5.817,0.7c-0.904,0.292-1.356,1.196-1.356,2.712v47.585c0.017,0.393,0.319,0.981,0.787,1.094l38.051,0.044 C94.867,76.231,101.723,59.947,92.322,50.873z"/><path d="M9.746,54.021c-0.084-4.274-6.341-4.292-6.43,0c0,0,0,12.683,0,12.683c-0.13,4.255,6.914,4.617,6.429,0 C9.746,66.705,9.746,54.021,9.746,54.021z"/><path d="M37.061,25.768c-2.225-0.505-4.384,1.741-4.242,4.155v43.737c0,1.603,1.079,2.406,3.237,2.406 c2.158,0,3.236-0.802,3.236-2.406V29.923C39.291,27.473,38.548,26.088,37.061,25.768z"/><path d="M26.672,43.262c-1.764-0.045-3.325,1.517-3.28,3.28v26.985c0,0.845,0.306,1.48,0.919,1.903 c1.718,1.174,5.653,0.851,5.555-1.903V46.543C29.913,44.808,28.407,43.221,26.672,43.262z"/></g></svg><span>SoundCloud</span></button>
+   <button data-p="twitch"><svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="#ffffff" d="M13 7.5l-2 2H9l-1.75 1.75V9.5H5V2h8v5.5z"/><g fill="#9146FF"><path d="M4.5 1L2 3.5v9h3V15l2.5-2.5h2L14 8V1H4.5zM13 7.5l-2 2H9l-1.75 1.75V9.5H5V2h8v5.5z"/><path d="M11.5 3.75h-1v3h1v-3zM8.75 3.75h-1v3h1v-3z"/></g></svg><span>Twitch</span></button>
+   <button data-p="bluesky"><svg viewBox="0 0 600 530" xmlns="http://www.w3.org/2000/svg"><path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0174-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z" fill="#1185fe"/></svg><span>Bluesky</span></button>
+   <button data-p="newgrounds"><svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg"><path d="M31.81 8a9.088 9.088 0 0 1 9.088 9.088v62.125A3.787 3.787 0 0 1 37.11 83h-8.33a3.787 3.787 0 0 1-3.787-3.787V27.537a3.787 3.787 0 0 0-3.787-3.787h-1.515a3.787 3.787 0 0 0-3.786 3.787v51.676A3.787 3.787 0 0 1 12.118 83H3.787A3.787 3.787 0 0 1 0 79.213V11.787A3.787 3.787 0 0 1 3.787 8h28.022Zm49.102 0A9.088 9.088 0 0 1 90 17.088v15.633a3.03 3.03 0 0 1-3.03 3.029H76.368a3.03 3.03 0 0 1-3.029-3.03v-6.698a2.272 2.272 0 0 0-2.272-2.272H67.28a2.272 2.272 0 0 0-2.272 2.272v38.963c0 .837.678 1.515 1.515 1.515h6.059c.836 0 1.514-.678 1.514-1.515V57.5h-1.514a3.03 3.03 0 0 1-3.03-3.03v-9.69a3.03 3.03 0 0 1 3.03-3.03h14.39A3.03 3.03 0 0 1 90 44.78v29.132A9.088 9.088 0 0 1 80.912 83H58.19a9.088 9.088 0 0 1-9.089-9.088V17.088A9.088 9.088 0 0 1 58.191 8h22.72Z" fill="url(#ng-grad)" fill-rule="evenodd"/></svg><span>Newgrounds</span></button>
   </div></div>
  <button id="go" aria-label="Send"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" fill="currentColor" d="M1.513 1.96a1.374 1.374 0 011.499-.21l19.335 9.215a1.146 1.146 0 010 2.07L3.012 22.25a1.374 1.374 0 01-1.947-1.46L2.49 12 1.065 3.21a1.374 1.374 0 01.448-1.25zm2.375 10.79l-1.304 8.042L21.031 12 2.584 3.208l1.304 8.042h7.362a.75.75 0 010 1.5H3.888z"/></svg></button></div>
  <div id="msg" class="card" hidden></div>
+ <p class="promo">Promote YouXNG! Allow other people to discover the locally hosted video downloader!</p>
 </section>
 <section id="updates"><h2>Updates</h2><div id="upd"></div></section>
 <section id="settings"><h2>Settings</h2>
  <div class="set"><label for="dark">Dark mode</label><input type="checkbox" id="dark"></div>
- <div class="set"><label for="plt">Default Platform</label><select id="plt"><option value="youtube">YouTube</option><option value="twitter">Twitter</option><option value="tiktok">TikTok</option><option value="reddit">Reddit</option></select></div>
+ <div class="set"><label for="plt">Default Platform</label><select id="plt"><option value="youtube">YouTube</option><option value="twitter">Twitter</option><option value="tiktok">TikTok</option><option value="reddit">Reddit</option><option value="soundcloud">SoundCloud</option><option value="twitch">Twitch</option><option value="bluesky">Bluesky</option><option value="newgrounds">Newgrounds</option></select></div>
  <div class="set"><label for="res">Hardcode Resolution</label><select id="res"><option value="choose">Choose</option><option value="best">Best</option><option value="2160">2160p</option><option value="1440">1440p</option><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option><option value="360">360p</option></select></div>
  <div class="set"><label for="type">Hardcode Type</label><select id="type"><option value="manual">Manual</option><option value="mp4">MP4</option><option value="mp3">MP3</option></select></div>
  <div class="set"><label for="name">File name</label><select id="name"><option value="title">Video title</option><option value="hard">youxng-video</option></select></div>
  <div class="set"><label for="gap">Sidebar Gap</label><select id="gap"><option value="close">Close</option><option value="default">Default</option><option value="huge">Huge</option></select></div>
- <div class="set"><label for="theme" class="lbl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3L14.0357 8.16153C14.2236 8.63799 14.3175 8.87622 14.4614 9.0771C14.5889 9.25516 14.7448 9.41106 14.9229 9.53859C15.1238 9.68245 15.362 9.77641 15.8385 9.96432L21 12L15.8385 14.0357C15.362 14.2236 15.1238 14.3175 14.9229 14.4614C14.7448 14.5889 14.5889 14.7448 14.4614 14.9229C14.3175 15.1238 14.2236 15.362 14.0357 15.8385L12 21L9.96432 15.8385C9.77641 15.362 9.68245 15.1238 9.53859 14.9229C9.41106 14.7448 9.25516 14.5889 9.0771 14.4614C8.87622 14.3175 8.63799 14.2236 8.16153 14.0357L3 12L8.16153 9.96432C8.63799 9.77641 8.87622 9.68245 9.0771 9.53859C9.25516 9.41106 9.41106 9.25516 9.53859 9.0771C9.68245 8.87622 9.77641 8.63799 9.96432 8.16153L12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom Themes</label><select id="theme"><option value="default">Default</option><option value="custom">Custom</option></select></div>
+ <details class="adv"><summary>Advanced Settings</summary><div class="body">
+  <div class="set"><label for="ctheme" class="lbl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3L14.0357 8.16153C14.2236 8.63799 14.3175 8.87622 14.4614 9.0771C14.5889 9.25516 14.7448 9.41106 14.9229 9.53859C15.1238 9.68245 15.362 9.77641 15.8385 9.96432L21 12L15.8385 14.0357C15.362 14.2236 15.1238 14.3175 14.9229 14.4614C14.7448 14.5889 14.5889 14.7448 14.4614 14.9229C14.3175 15.1238 14.2236 15.362 14.0357 15.8385L12 21L9.96432 15.8385C9.77641 15.362 9.68245 15.1238 9.53859 14.9229C9.41106 14.7448 9.25516 14.5889 9.0771 14.4614C8.87622 14.3175 8.63799 14.2236 8.16153 14.0357L3 12L8.16153 9.96432C8.63799 9.77641 8.87622 9.68245 9.0771 9.53859C9.25516 9.41106 9.41106 9.25516 9.53859 9.0771C9.68245 8.87622 9.77641 8.63799 9.96432 8.16153L12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom Themes<span class="tag">BETA</span></label><input type="checkbox" id="ctheme"></div>
+  <div class="set" id="bgrow" hidden><label for="bgc">Background colour</label><input type="color" id="bgc"></div>
+  <div class="set"><label for="cname">Custom Download Save Name</label><input type="text" id="cname" placeholder="Uses File name setting" maxlength="100" autocomplete="off" spellcheck="false"></div>
+  <div class="set"><label for="vfmt">Different Save Types</label><div class="pair"><select id="vfmt" aria-label="Video save type"><option value="mp4">MP4</option><option value="mkv">MKV</option></select><select id="afmt" aria-label="Audio save type"><option value="mp3">MP3</option><option value="ogg">OGG</option><option value="m4a">M4A</option><option value="flac">FLAC</option><option value="wav">WAV</option><option value="opus">OPUS</option></select></div></div>
+ </div></details>
 </section>
-<section id="store"><div class="store"><h2>YouXNG+</h2><p>$2/mo</p><button class="soon">Purchase</button>
- <ul><li>Support the development</li><li>Custom Themes</li><li>Early access to new features</li><li>More settings</li></ul></div>
- <div class="store"><h2>Ko-Fi</h2><a href="https://ko-fi.com/kynorie" target="_blank" rel="noopener">Donate</a>
+<section id="store"><div class="store"><h2>Ko-Fi</h2><a href="https://ko-fi.com/kynorie" target="_blank" rel="noopener">Donate</a>
  <ul><li>Support development by donating how much money you want!</li></ul></div></section>
 </main>
-<div id="modal" hidden><div class="box"><h2>This requires YouXNG+</h2><button class="b" id="mclose">Close</button></div></div>
 <script>
 const $=s=>document.querySelector(s);
-const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',platform:'youtube',...(()=>{try{return JSON.parse(localStorage.getItem('youxng')||'{}')}catch{return{}}})()};
-const save=()=>{try{localStorage.setItem('youxng',JSON.stringify(cfg))}catch{}document.documentElement.style.setProperty('--gap',{close:'0px',default:'22px',huge:'56px'}[cfg.gap]||'22px');document.documentElement.toggleAttribute('data-dark',cfg.dark);document.documentElement.style.setProperty('--nw',cfg.navw+'px')};
+const root=document.documentElement;
+const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',platform:'youtube',custom:false,bgc:'',cname:'',vfmt:'mp4',afmt:'mp3',...(()=>{try{return JSON.parse(localStorage.getItem('youxng')||'{}')}catch{return{}}})()};
+delete cfg.style;delete cfg.prev;delete cfg.v;
+const isHex=v=>/^#[0-9a-f]{6}$/i.test(v);
+const rgb=h=>{const n=parseInt(h.slice(1),16);return[n>>16&255,n>>8&255,n&255]};
+const hex=a=>'#'+a.map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+const mix=(a,b,k)=>hex(a.map((v,i)=>v+(b[i]-v)*k));
+const lum=a=>{const f=c=>(c/=255)<=.03928?c/12.92:((c+.055)/1.055)**2.4;return .2126*f(a[0])+.7152*f(a[1])+.0722*f(a[2])};
+const CUSTOM=['--bg','--deep','--side','--in','--line','--mut','--fg'];
+function theme(){
+ CUSTOM.forEach(v=>root.style.removeProperty(v));
+ if(!cfg.custom||!isHex(cfg.bgc))return;
+ const bg=rgb(cfg.bgc),L=lum(bg),fg=1.05/(L+.05)>(L+.05)/.05?[255,255,255]:[0,0,0];
+ const v={'--bg':cfg.bgc,'--side':mix(bg,fg,.05),'--deep':mix(bg,fg,.09),'--in':mix(bg,fg,.035),'--line':mix(bg,fg,.22),'--mut':mix(bg,fg,.55),'--fg':hex(fg)};
+ for(const k in v)root.style.setProperty(k,v[k]);
+}
+const save=()=>{try{localStorage.setItem('youxng',JSON.stringify(cfg))}catch{}root.style.setProperty('--gap',{close:'0px',default:'22px',huge:'56px'}[cfg.gap]||'22px');root.toggleAttribute('data-dark',cfg.dark);root.style.setProperty('--nw',cfg.navw+'px');theme()};
 save();
 $('#grip').onpointerdown=e=>{
  e.preventDefault();document.body.style.userSelect='none';document.body.style.cursor='col-resize';
- const move=m=>{cfg.navw=Math.min(400,Math.max(56,m.clientX));document.documentElement.style.setProperty('--nw',cfg.navw+'px')};
+ const move=m=>{cfg.navw=Math.min(400,Math.max(56,m.clientX));root.style.setProperty('--nw',cfg.navw+'px')};
  const up=()=>{removeEventListener('pointermove',move);removeEventListener('pointerup',up);document.body.style.userSelect=document.body.style.cursor='';save()};
  addEventListener('pointermove',move);addEventListener('pointerup',up);
 };
+const lab=f=>f.toUpperCase();
+const labels=()=>{$('#type').options[1].textContent=lab(cfg.vfmt);$('#type').options[2].textContent=lab(cfg.afmt)};
 $('#dark').checked=cfg.dark;
 $('#plt').value=cfg.platform;
-for(const k of ['res','type','name','gap']) $('#'+k).value=cfg[k];
+for(const k of ['res','type','name','gap','vfmt','afmt']) $('#'+k).value=cfg[k];
+$('#ctheme').checked=cfg.custom;$('#bgrow').hidden=!cfg.custom;$('#bgc').value=isHex(cfg.bgc)?cfg.bgc:'#17181a';
+$('#cname').value=cfg.cname;
+labels();
 $('#dark').onchange=e=>{cfg.dark=e.target.checked;save()};
-for(const k of ['res','type','name','gap']) $('#'+k).onchange=e=>{cfg[k]=e.target.value;save()};
+for(const k of ['res','type','name','gap','vfmt','afmt']) $('#'+k).onchange=e=>{cfg[k]=e.target.value;save();labels()};
 $('#plt').onchange=e=>{cfg.platform=e.target.value;save();pick(cfg.platform)};
-$('#theme').onchange=e=>{if(e.target.value==='custom'){$('#modal').hidden=false;e.target.value='default'}};
-$('#mclose').onclick=()=>$('#modal').hidden=true;
+$('#ctheme').onchange=e=>{
+ cfg.custom=e.target.checked;$('#bgrow').hidden=!cfg.custom;
+ if(cfg.custom&&!isHex(cfg.bgc)){cfg.bgc=cfg.dark?'#17181a':'#ffffff';$('#bgc').value=cfg.bgc}
+ save()};
+$('#bgc').oninput=e=>{cfg.bgc=e.target.value;save()};
+$('#cname').oninput=e=>{cfg.cname=e.target.value;save()};
 
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('nav button,section').forEach(x=>x.classList.remove('on'));
@@ -122,11 +161,16 @@ const t=(s,tag='div')=>Object.assign(document.createElement(tag),{textContent:s}
 const short=s=>s.length>15?s.slice(0,15)+'...':s;
 const msg=$('#msg'),url=$('#url');
 const P={
- youtube:{name:'YouTube',ph:'youtube.com/...',re:/youtube\.com\/|youtu\.be/i,icon:$('#pmenu [data-p=youtube] svg').outerHTML},
- twitter:{name:'Twitter',ph:'x.com/...',re:/(twitter|x)\.com\//i,icon:$('#pmenu [data-p=twitter] svg').outerHTML},
- tiktok:{name:'TikTok',ph:'tiktok.com/...',re:/tiktok\.com\//i,icon:$('#pmenu [data-p=tiktok] svg').outerHTML},
- reddit:{name:'Reddit',ph:'reddit.com/...',re:/reddit\.com\/|redd\.it\//i,icon:$('#pmenu [data-p=reddit] svg').outerHTML}
+ youtube:{name:'YouTube',ph:'youtube.com/...',re:/youtube\.com\/|youtu\.be/i},
+ twitter:{name:'Twitter',ph:'x.com/...',re:/(twitter|x)\.com\//i},
+ tiktok:{name:'TikTok',ph:'tiktok.com/...',re:/tiktok\.com\//i},
+ reddit:{name:'Reddit',ph:'reddit.com/...',re:/reddit\.com\/|redd\.it\//i},
+ soundcloud:{name:'SoundCloud',ph:'soundcloud.com/...',re:/soundcloud\.com\//i},
+ twitch:{name:'Twitch',ph:'twitch.tv/...',re:/twitch\.tv\//i},
+ bluesky:{name:'Bluesky',ph:'bsky.app/...',re:/bsky\.app\//i},
+ newgrounds:{name:'Newgrounds',ph:'newgrounds.com/...',re:/newgrounds\.com\//i}
 };
+for(const k in P)P[k].icon=$('#pmenu [data-p='+k+'] svg').outerHTML;
 let plat=P[cfg.platform]?cfg.platform:'youtube';
 function pick(k){
  plat=P[k]?k:'youtube';
@@ -156,13 +200,13 @@ async function go(){
  try{
   cur=await post('/api/info',{url:v,platform:plat});cur.platform=plat;busy=false;
   if(cfg.type==='manual')ready();
-  else dl(cfg.type,cfg.res==='choose'?'best':cfg.res);
+  else dl(cfg.type==='mp3'||cur.audio_only?cfg.afmt:cfg.vfmt,cfg.res==='choose'?'best':cfg.res);
  }catch(e){busy=false;show('err',t(e.message))}
 }
-async function dl(type,res){
+async function dl(fmt,res){
  busy=true;show('ok',t("Downloading '"+short(cur.title)+"'"));
  try{
-  const j=await post('/api/prepare',{url:cur.url,platform:cur.platform,type,res,name:cfg.name});
+  const j=await post('/api/prepare',{url:cur.url,platform:cur.platform,fmt,res,name:cfg.name,custom:cfg.cname.trim()});
   Object.assign(document.createElement('a'),{href:'/api/file/'+j.token}).click();
   busy=false;ready();
  }catch(e){busy=false;show('err',t(e.message))}
@@ -173,9 +217,10 @@ function ready(){
  const res=()=>cfg.res==='choose'?q.value:cfg.res;
  const b=(l,k)=>Object.assign(document.createElement('button'),{className:'b',textContent:l,onclick:()=>!busy&&dl(k,res())});
  const acts=t('');acts.className='acts';
- if(cfg.res==='choose')acts.append(q);
- acts.append(b('Download MP4','mp4'),b('Download MP3','mp3'));
- show('ready',t('Download ready!','b'),t('Click one of the buttons to download the video.'),acts);
+ if(cfg.res==='choose'&&!cur.audio_only)acts.append(q);
+ if(!cur.audio_only)acts.append(b('Download '+lab(cfg.vfmt),cfg.vfmt));
+ acts.append(b('Download '+lab(cfg.afmt),cfg.afmt));
+ show('ready',t('Download ready!','b'),t(cur.audio_only?'Click the button to download the audio.':'Click one of the buttons to download the video.'),acts);
 }
 $('#go').onclick=go;
 url.addEventListener('keydown',e=>e.key==='Enter'&&go());
@@ -190,7 +235,4 @@ async function updates(){
    return c}));
  }catch{box.replaceChildren(t("Couldn't check for updates."))}
 }
-document.querySelectorAll('.soon').forEach(b=>b.onclick=()=>{
- if(b.dataset.w)return;const old=b.textContent;b.dataset.w=1;b.textContent='Coming Soon!';
- setTimeout(()=>{b.textContent=old;delete b.dataset.w},2000)});
 </script></body></html>
