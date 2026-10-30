@@ -6,7 +6,7 @@ import yt_dlp
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from yt_dlp.version import __version__ as YTDLP_VERSION
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 REPO = "kynorie/youxng"
 HOST, PORT = "127.0.0.1", 3003
 
@@ -19,8 +19,17 @@ PLATFORMS = {
     "twitter": ("twitter.com", "x.com"),
     "tiktok": ("tiktok.com",),
     "reddit": ("reddit.com", "redd.it"),
+    "soundcloud": ("soundcloud.com",),
+    "twitch": ("twitch.tv",),
+    "bluesky": ("bsky.app",),
+    "newgrounds": ("newgrounds.com",),
 }
-NAMES = {"youtube": "YouTube", "twitter": "Twitter", "tiktok": "TikTok", "reddit": "Reddit"}
+NAMES = {
+    "youtube": "YouTube", "twitter": "Twitter", "tiktok": "TikTok", "reddit": "Reddit",
+    "soundcloud": "SoundCloud", "twitch": "Twitch", "bluesky": "Bluesky", "newgrounds": "Newgrounds",
+}
+VIDEO_FORMATS = ("mp4", "mkv")
+AUDIO_CODECS = {"mp3": "mp3", "ogg": "vorbis", "m4a": "m4a", "flac": "flac", "wav": "wav", "opus": "opus"}
 
 
 def get_platform(value):
@@ -65,7 +74,9 @@ def info():
         return jsonify(error="Couldn't find that video."), 400
     heights = sorted({f["height"] for f in d.get("formats", [])
                       if f.get("height") and f.get("vcodec") != "none"}, reverse=True)
-    return jsonify(title=d.get("title") or "video", heights=heights, url=url)
+    formats = d.get("formats") or []
+    audio_only = not heights and bool(formats) and all(f.get("vcodec") == "none" for f in formats)
+    return jsonify(title=d.get("title") or "video", heights=heights, url=url, audio_only=audio_only)
 
 
 @app.post("/api/prepare")
@@ -75,15 +86,18 @@ def prepare():
     url = clean_url(j.get("url"), platform)
     if not url:
         return jsonify(error=f"Please add a {NAMES[platform]} link!"), 400
-    kind, res = ("mp3" if j.get("type") == "mp3" else "mp4"), str(j.get("res", "best"))
+    fmt, res = str(j.get("fmt", "mp4")).lower(), str(j.get("res", "best"))
+    if fmt not in VIDEO_FORMATS and fmt not in AUDIO_CODECS:
+        fmt = "mp4"
     tmp = tempfile.mkdtemp(prefix="youxng-")
     opts = {"quiet": True, "noplaylist": True, "outtmpl": os.path.join(tmp, "out.%(ext)s")}
-    if kind == "mp3":
+    if fmt in AUDIO_CODECS:
         opts.update(format="bestaudio/best", postprocessors=[
-            {"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "192"}])
+            {"key": "FFmpegExtractAudio", "preferredcodec": AUDIO_CODECS[fmt], "preferredquality": "192"}])
     else:
         c = f"[height<={int(res)}]" if res.isdigit() else ""
-        opts.update(format=f"bv*{c}[ext=mp4]+ba[ext=m4a]/bv*{c}+ba/b{c}", merge_output_format="mp4")
+        pick = f"bv*{c}+ba/b{c}" if fmt == "mkv" else f"bv*{c}[ext=mp4]+ba[ext=m4a]/bv*{c}+ba/b{c}"
+        opts.update(format=pick, merge_output_format=fmt)
     try:
         with yt_dlp.YoutubeDL(opts) as y:
             d = y.extract_info(url, download=True)
@@ -92,7 +106,8 @@ def prepare():
         shutil.rmtree(tmp, ignore_errors=True)
         return jsonify(error="Download failed. Is ffmpeg installed?"), 500
     title = re.sub(r'[\\/:*?"<>|]+', "", d.get("title") or "").strip()
-    base = title if j.get("name") == "title" and title else "youxng-video"
+    custom = re.sub(r'[\\/:*?"<>|\x00-\x1f]+', "", str(j.get("custom") or "")).strip(" .")[:100]
+    base = custom or (title if j.get("name") == "title" and title else "youxng-video")
     token = uuid.uuid4().hex
     JOBS[token] = (os.path.join(tmp, f), f"{base}.{f.rsplit('.', 1)[-1]}", tmp)
     return jsonify(token=token)
