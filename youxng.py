@@ -1,4 +1,4 @@
-import json, os, re, shutil, tempfile, threading, uuid, webbrowser
+import json, os, re, shutil, tempfile, threading, time, uuid, webbrowser
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
@@ -11,7 +11,8 @@ REPO = "kynorie/youxng"
 HOST, PORT = "127.0.0.1", 3003
 
 app = Flask(__name__)
-JOBS = {}
+JOBS, FILES = {}, {}
+TTL = 1800  # seconds a finished file stays available
 
 
 PLATFORMS = {
@@ -79,18 +80,31 @@ def info():
     return jsonify(title=d.get("title") or "video", heights=heights, url=url, audio_only=audio_only)
 
 
-@app.post("/api/prepare")
-def prepare():
-    j = request.json or {}
-    platform = get_platform(j.get("platform"))
-    url = clean_url(j.get("url"), platform)
-    if not url:
-        return jsonify(error=f"Please add a {NAMES[platform]} link!"), 400
-    fmt, res = str(j.get("fmt", "mp4")).lower(), str(j.get("res", "best"))
-    if fmt not in VIDEO_FORMATS and fmt not in AUDIO_CODECS:
-        fmt = "mp4"
+def run_job(jid, url, fmt, res, j):
+    job = JOBS[jid]
     tmp = tempfile.mkdtemp(prefix="youxng-")
-    opts = {"quiet": True, "noplaylist": True, "outtmpl": os.path.join(tmp, "out.%(ext)s")}
+    parts = {}
+
+    def hook(d):
+        if d.get("status") not in ("downloading", "finished"):
+            return
+        if d["status"] == "finished":
+            frac = 1
+        else:
+            total = d.get("total_bytes") or d.get("total_bytes_estimate")
+            if total:
+                frac = (d.get("downloaded_bytes") or 0) / total
+            elif d.get("fragment_count"):
+                frac = (d.get("fragment_index") or 0) / d["fragment_count"]
+            else:
+                frac = 0
+        parts[d.get("filename") or ""] = min(frac, 1)
+        streams = len((d.get("info_dict") or {}).get("requested_formats") or []) or 1
+        pct = int(sum(parts.values()) / max(streams, len(parts)) * 100)
+        job["pct"] = max(job["pct"], min(99, pct))
+
+    opts = {"quiet": True, "noplaylist": True, "progress_hooks": [hook],
+            "outtmpl": os.path.join(tmp, "out.%(ext)s")}
     if fmt in AUDIO_CODECS:
         opts.update(format="bestaudio/best", postprocessors=[
             {"key": "FFmpegExtractAudio", "preferredcodec": AUDIO_CODECS[fmt], "preferredquality": "192"}])
@@ -101,27 +115,77 @@ def prepare():
     try:
         with yt_dlp.YoutubeDL(opts) as y:
             d = y.extract_info(url, download=True)
-        f = os.listdir(tmp)[0]
+        f = next(x for x in os.listdir(tmp) if x.startswith("out."))
     except Exception:
         shutil.rmtree(tmp, ignore_errors=True)
-        return jsonify(error="Download failed. Is ffmpeg installed?"), 500
+        job.update(status="error", error="Download failed. Is ffmpeg installed?")
+        return
     title = re.sub(r'[\\/:*?"<>|]+', "", d.get("title") or "").strip()
     custom = re.sub(r'[\\/:*?"<>|\x00-\x1f]+', "", str(j.get("custom") or "")).strip(" .")[:100]
     base = custom or (title if j.get("name") == "title" and title else "youxng-video")
     token = uuid.uuid4().hex
-    JOBS[token] = (os.path.join(tmp, f), f"{base}.{f.rsplit('.', 1)[-1]}", tmp)
-    return jsonify(token=token)
+    FILES[token] = (os.path.join(tmp, f), f"{base}.{f.rsplit('.', 1)[-1]}", tmp, time.time())
+    job.update(status="done", pct=100, token=token)
+
+
+@app.post("/api/prepare")
+def prepare():
+    j = request.json or {}
+    platform = get_platform(j.get("platform"))
+    url = clean_url(j.get("url"), platform)
+    if not url:
+        return jsonify(error=f"Please add a {NAMES[platform]} link!"), 400
+    fmt, res = str(j.get("fmt", "mp4")).lower(), str(j.get("res", "best"))
+    if fmt not in VIDEO_FORMATS and fmt not in AUDIO_CODECS:
+        fmt = "mp4"
+    jid = uuid.uuid4().hex
+    JOBS[jid] = dict(status="running", pct=0, ts=time.time())
+    threading.Thread(target=run_job, args=(jid, url, fmt, res, j), daemon=True).start()
+    return jsonify(job=jid)
+
+
+@app.get("/api/progress/<jid>")
+def progress(jid):
+    job = JOBS.get(jid)
+    if not job:
+        return jsonify(error="Expired"), 404
+    return jsonify(status=job["status"], pct=job["pct"], token=job.get("token"), error=job.get("error"))
 
 
 @app.get("/api/file/<token>")
 def file(token):
-    job = JOBS.pop(token, None)
-    if not job:
+    f = FILES.get(token)
+    if not f:
         return "Expired", 404
-    path, name, tmp = job
-    r = send_file(path, as_attachment=True, download_name=name)
-    r.call_on_close(lambda: shutil.rmtree(tmp, ignore_errors=True))
-    return r
+    return send_file(f[0], as_attachment=True, download_name=f[1])
+
+
+CHECKS = {
+    "ffmpeg": lambda: bool(shutil.which("ffmpeg")),
+    "ffprobe": lambda: bool(shutil.which("ffprobe")),
+    "yt-dlp": lambda: callable(getattr(yt_dlp, "YoutubeDL", None)),
+}
+
+
+@app.get("/api/check/<name>")
+def check(name):
+    fn = CHECKS.get(name)
+    if not fn:
+        return jsonify(error="Unknown check"), 404
+    return jsonify(ok=fn())
+
+
+def sweep():
+    while True:
+        time.sleep(60)
+        now = time.time()
+        for token, f in list(FILES.items()):
+            if now - f[3] > TTL:
+                FILES.pop(token, None)
+                shutil.rmtree(f[2], ignore_errors=True)
+        for k, job in list(JOBS.items()):
+            if now - job["ts"] > TTL:
+                JOBS.pop(k, None)
 
 
 @app.get("/api/updates")
@@ -141,5 +205,6 @@ def updates():
 
 
 if __name__ == "__main__":
+    threading.Thread(target=sweep, daemon=True).start()
     threading.Timer(1, lambda: webbrowser.open(f"http://{HOST}:{PORT}")).start()
     app.run(HOST, PORT)
