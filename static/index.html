@@ -9,9 +9,6 @@ body{margin:0;height:100vh;display:flex;background:var(--bg);color:var(--fg);fon
 nav{width:var(--nw,190px);flex:none;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:var(--gap,22px);background:var(--side);border-right:1px solid var(--line);padding:20px 0}
 nav h1{font-size:18px;margin:0 16px 12px}
 .lbl{display:flex;align-items:center;gap:8px}
-.store ul{display:table;margin:24px auto 0;padding-left:20px;text-align:left}
-.store li{margin:4px 0}
-.store a{display:inline-block;margin-top:20px;padding:10px 32px;background:#fff;color:#000;font:inherit;text-decoration:none}
 .grip{position:absolute;top:0;right:0;width:6px;height:100%;cursor:col-resize}
 .grip:hover{background:var(--line)}
 .title{text-align:center;font-size:44px;font-weight:800;font-style:italic;margin-bottom:18px}
@@ -46,8 +43,13 @@ input[type=checkbox]{appearance:none;width:42px;height:22px;margin:0;position:re
 input[type=checkbox]::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--mut)}
 input[type=checkbox]:checked::after{left:22px;background:var(--fg)}
 .store{background:#5865F2;color:#fff;padding:32px;text-align:center}
-.store h2{margin:0}
-.promo{margin:14px 0 0;text-align:center;font-size:13px;opacity:.5}
+.store .warn{font-weight:700;font-size:17px;margin:0 0 26px}
+.store .w{margin-top:20px}
+.store .w b{display:block;margin-bottom:6px}
+.store code{display:block;font:13px/1.5 ui-monospace,monospace;word-break:break-all;user-select:all}
+.promo{display:flex;justify-content:center;align-items:center;gap:8px;margin:14px 0 0;text-align:center;font-size:13px;opacity:.5}
+.promo button{display:grid;place-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer}
+.promo svg{width:18px;height:18px}
 .adv{margin-top:20px;border:1px solid var(--line);background:var(--in)}
 .adv summary{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;list-style:none;font-weight:600}
 .adv summary::-webkit-details-marker{display:none}
@@ -59,7 +61,13 @@ input[type=checkbox]:checked::after{left:22px;background:var(--fg)}
 .tag{padding:1px 6px;border:1px solid var(--mut);color:var(--mut);font-size:11px}
 .set input[type=text]{flex:none;width:210px;height:34px;padding:0 10px;font-size:14px}
 input[type=color]{width:46px;height:32px;padding:0;border:1px solid var(--line);background:none;cursor:pointer}
-@media(max-width:600px){nav{width:56px}nav h1,nav span{display:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1.2s linear infinite}
+#chk{position:fixed;bottom:28px;left:calc(var(--nw,190px) + (100vw - var(--nw,190px))/2);transform:translateX(-50%);margin:0;z-index:9;text-align:center}
+#chk.ready{display:flex;align-items:center;gap:10px}
+.upbtn{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;height:44px;border:1px solid var(--line);background:var(--in);color:var(--fg);text-decoration:none}
+.cmd{display:block;margin-top:4px;padding:8px 10px;background:var(--in);border:1px solid var(--line);font:13px ui-monospace,monospace;user-select:all}
+@media(max-width:600px){nav{width:56px}nav h1,nav span{display:none}#chk{left:50%}}
 </style></head><body>
 <svg style="position:absolute;width:0;height:0" aria-hidden="true"><defs><linearGradient id="ng-grad" x1="50%" y1="0%" x2="50%" y2="153.355%"><stop stop-color="#FF9D00" offset="0%"/><stop stop-color="#FF0B33" offset="100%"/></linearGradient></defs></svg>
 <nav>
@@ -68,8 +76,9 @@ input[type=color]{width:46px;height:32px;padding:0;border:1px solid var(--line);
 <button class="on" data-t="home"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 0L0 6V8H1V15H4V10H7V15H15V8H16V6L14 4.5V1H11V2.25L8 0ZM9 10H12V13H9V10Z" fill="currentColor"/></svg><span>Home</span></button>
 <button data-t="updates"><svg viewBox="0 0 24 24" fill="none"><path d="M17 17H17.01M15.6 14H18C18.9319 14 19.3978 14 19.7654 14.1522C20.2554 14.3552 20.6448 14.7446 20.8478 15.2346C21 15.6022 21 16.0681 21 17C21 17.9319 21 18.3978 20.8478 18.7654C20.6448 19.2554 20.2554 19.6448 19.7654 19.8478C19.3978 20 18.9319 20 18 20H6C5.06812 20 4.60218 20 4.23463 19.8478C3.74458 19.6448 3.35523 19.2554 3.15224 18.7654C3 18.3978 3 17.9319 3 17C3 16.0681 3 15.6022 3.15224 15.2346C3.35523 14.7446 3.74458 14.3552 4.23463 14.1522C4.60218 14 5.06812 14 6 14H8.4M12 15V4M12 4L15 7M12 4L9 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Updates</span></button>
 <button data-t="settings"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7848 0.449982C13.8239 0.449982 14.7167 1.16546 14.9122 2.15495L14.9991 2.59495C15.3408 4.32442 17.1859 5.35722 18.9016 4.7794L19.3383 4.63233C20.3199 4.30175 21.4054 4.69358 21.9249 5.56605L22.7097 6.88386C23.2293 7.75636 23.0365 8.86366 22.2504 9.52253L21.9008 9.81555C20.5267 10.9672 20.5267 13.0328 21.9008 14.1844L22.2504 14.4774C23.0365 15.1363 23.2293 16.2436 22.7097 17.1161L21.925 18.4339C21.4054 19.3064 20.3199 19.6982 19.3382 19.3676L18.9017 19.2205C17.1859 18.6426 15.3408 19.6754 14.9991 21.405L14.9122 21.845C14.7167 22.8345 13.8239 23.55 12.7848 23.55H11.2152C10.1761 23.55 9.28331 22.8345 9.08781 21.8451L9.00082 21.4048C8.65909 19.6754 6.81395 18.6426 5.09822 19.2205L4.66179 19.3675C3.68016 19.6982 2.59465 19.3063 2.07505 18.4338L1.2903 17.1161C0.770719 16.2436 0.963446 15.1363 1.74956 14.4774L2.09922 14.1844C3.47324 13.0327 3.47324 10.9672 2.09922 9.8156L1.74956 9.52254C0.963446 8.86366 0.77072 7.75638 1.2903 6.8839L2.07508 5.56608C2.59466 4.69359 3.68014 4.30176 4.66176 4.63236L5.09831 4.77939C6.81401 5.35722 8.65909 4.32449 9.00082 2.59506L9.0878 2.15487C9.28331 1.16542 10.176 0.449982 11.2152 0.449982H12.7848ZM12 15.3C13.8225 15.3 15.3 13.8225 15.3 12C15.3 10.1774 13.8225 8.69998 12 8.69998C10.1774 8.69998 8.69997 10.1774 8.69997 12C8.69997 13.8225 10.1774 15.3 12 15.3Z" fill="currentColor"/></svg><span>Settings</span></button>
-<button data-t="store"><svg viewBox="0 0 24 24"><path d="M4.46785 10.2658C4.47574 10.3372 4.48376 10.4094 4.49187 10.4823L4.61751 11.6131C4.7057 12.4072 4.78218 13.0959 4.91562 13.6455C5.05917 14.2367 5.29582 14.7937 5.78931 15.2354C6.28281 15.6771 6.86251 15.8508 7.46598 15.9281C8.02694 16.0001 8.71985 16 9.51887 16H14.8723C15.4201 16 15.9036 16 16.3073 15.959C16.7448 15.9146 17.1698 15.8162 17.5785 15.5701C17.9872 15.324 18.2731 14.9944 18.5171 14.6286C18.7422 14.291 18.9684 13.8637 19.2246 13.3797L21.7141 8.67734C22.5974 7.00887 21.3879 4.99998 19.5 4.99998L9.39884 4.99998C8.41604 4.99993 7.57525 4.99988 6.90973 5.09287C6.5729 5.13994 6.24284 5.21529 5.93326 5.34375L5.78941 4.04912C5.65979 2.88255 4.67375 2 3.5 2H3C2.44772 2 2 2.44771 2 3C2 3.55228 2.44772 4 3 4H3.5C3.65465 4 3.78456 4.11628 3.80164 4.26998L4.46785 10.2658Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14 19.5C14 18.1193 15.1193 17 16.5 17C17.8807 17 19 18.1193 19 19.5C19 20.8807 17.8807 22 16.5 22C15.1193 22 14 20.8807 14 19.5Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M5 19.5C5 18.1193 6.11929 17 7.5 17C8.88071 17 10 18.1193 10 19.5C10 20.8807 8.88071 22 7.5 22C6.11929 22 5 20.8807 5 19.5Z" fill="currentColor"/></svg><span>Store</span></button>
+<button data-t="donate"><svg viewBox="-2 -1.5 24 24" fill="currentColor"><path d="M9 13.858h-.051A.949.949 0 0 1 8 12.909a1 1 0 1 0-2 0 2.949 2.949 0 0 0 2.949 2.949H9v1a1 1 0 0 0 2 0v-1a3 3 0 0 0 0-6v-2h.022c.54 0 .978.438.978.978a1 1 0 0 0 2 0 2.978 2.978 0 0 0-2.978-2.978H11v-1a1 1 0 0 0-2 0v1a3 3 0 1 0 0 6v2zm2 0v-2a1 1 0 0 1 0 2zm-2-6v2a1 1 0 1 1 0-2zm1 13c-5.523 0-10-4.477-10-10s4.477-10 10-10 10 4.477 10 10-4.477 10-10 10z"/></svg><span>Donation</span></button>
 </nav>
+<div id="chk" class="card ready"><svg class="spin" viewBox="0 0 16 16" fill="none"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8z" opacity=".2"/><path d="M7.25.75A.75.75 0 018 0a8 8 0 018 8 .75.75 0 01-1.5 0A6.5 6.5 0 008 1.5a.75.75 0 01-.75-.75z"/></g></svg><span>Checking ffmpeg...</span></div>
 <main>
 <section id="home" class="on">
  <div class="title">YouXNG</div>
@@ -87,30 +96,36 @@ input[type=color]{width:46px;height:32px;padding:0;border:1px solid var(--line);
   </div></div>
  <button id="go" aria-label="Send"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" fill="currentColor" d="M1.513 1.96a1.374 1.374 0 011.499-.21l19.335 9.215a1.146 1.146 0 010 2.07L3.012 22.25a1.374 1.374 0 01-1.947-1.46L2.49 12 1.065 3.21a1.374 1.374 0 01.448-1.25zm2.375 10.79l-1.304 8.042L21.031 12 2.584 3.208l1.304 8.042h7.362a.75.75 0 010 1.5H3.888z"/></svg></button></div>
  <div id="msg" class="card" hidden></div>
- <p class="promo">Promote YouXNG! Allow other people to discover the locally hosted video downloader!</p>
+ <p class="promo" id="promo"><span>Promote YouXNG! Allow other people to discover the locally hosted video downloader!</span><button id="hidepromo" aria-label="Hide promotion" title="Hide"><svg viewBox="0 0 24 24" fill="none"><path d="M2.99902 3L20.999 21M9.8433 9.91364C9.32066 10.4536 8.99902 11.1892 8.99902 12C8.99902 13.6569 10.3422 15 11.999 15C12.8215 15 13.5667 14.669 14.1086 14.133M6.49902 6.64715C4.59972 7.90034 3.15305 9.78394 2.45703 12C3.73128 16.0571 7.52159 19 11.9992 19C13.9881 19 15.8414 18.4194 17.3988 17.4184M10.999 5.04939C11.328 5.01673 11.6617 5 11.9992 5C16.4769 5 20.2672 7.94291 21.5414 12C21.2607 12.894 20.8577 13.7338 20.3522 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></p>
 </section>
 <section id="updates"><h2>Updates</h2><div id="upd"></div></section>
 <section id="settings"><h2>Settings</h2>
+ <details class="adv" open><summary>Regular Settings</summary><div class="body">
  <div class="set"><label for="dark">Dark mode</label><input type="checkbox" id="dark"></div>
  <div class="set"><label for="plt">Default Platform</label><select id="plt"><option value="youtube">YouTube</option><option value="twitter">Twitter</option><option value="tiktok">TikTok</option><option value="reddit">Reddit</option><option value="soundcloud">SoundCloud</option><option value="twitch">Twitch</option><option value="bluesky">Bluesky</option><option value="newgrounds">Newgrounds</option></select></div>
  <div class="set"><label for="res">Hardcode Resolution</label><select id="res"><option value="choose">Choose</option><option value="best">Best</option><option value="2160">2160p</option><option value="1440">1440p</option><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option><option value="360">360p</option></select></div>
  <div class="set"><label for="type">Hardcode Type</label><select id="type"><option value="manual">Manual</option><option value="mp4">MP4</option><option value="mp3">MP3</option></select></div>
  <div class="set"><label for="name">File name</label><select id="name"><option value="title">Video title</option><option value="hard">youxng-video</option></select></div>
  <div class="set"><label for="gap">Sidebar Gap</label><select id="gap"><option value="close">Close</option><option value="default">Default</option><option value="huge">Huge</option></select></div>
+ </div></details>
  <details class="adv"><summary>Advanced Settings</summary><div class="body">
-  <div class="set"><label for="ctheme" class="lbl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3L14.0357 8.16153C14.2236 8.63799 14.3175 8.87622 14.4614 9.0771C14.5889 9.25516 14.7448 9.41106 14.9229 9.53859C15.1238 9.68245 15.362 9.77641 15.8385 9.96432L21 12L15.8385 14.0357C15.362 14.2236 15.1238 14.3175 14.9229 14.4614C14.7448 14.5889 14.5889 14.7448 14.4614 14.9229C14.3175 15.1238 14.2236 15.362 14.0357 15.8385L12 21L9.96432 15.8385C9.77641 15.362 9.68245 15.1238 9.53859 14.9229C9.41106 14.7448 9.25516 14.5889 9.0771 14.4614C8.87622 14.3175 8.63799 14.2236 8.16153 14.0357L3 12L8.16153 9.96432C8.63799 9.77641 8.87622 9.68245 9.0771 9.53859C9.25516 9.41106 9.41106 9.25516 9.53859 9.0771C9.68245 8.87622 9.77641 8.63799 9.96432 8.16153L12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom Themes<span class="tag">BETA</span></label><input type="checkbox" id="ctheme"></div>
+  <div class="set"><label for="ctheme" class="lbl">Custom Themes<span class="tag">BETA</span></label><input type="checkbox" id="ctheme"></div>
   <div class="set" id="bgrow" hidden><label for="bgc">Background colour</label><input type="color" id="bgc"></div>
   <div class="set"><label for="cname">Custom Download Save Name</label><input type="text" id="cname" placeholder="Uses File name setting" maxlength="100" autocomplete="off" spellcheck="false"></div>
   <div class="set"><label for="vfmt">Different Save Types</label><div class="pair"><select id="vfmt" aria-label="Video save type"><option value="mp4">MP4</option><option value="mkv">MKV</option></select><select id="afmt" aria-label="Audio save type"><option value="mp3">MP3</option><option value="ogg">OGG</option><option value="m4a">M4A</option><option value="flac">FLAC</option><option value="wav">WAV</option><option value="opus">OPUS</option></select></div></div>
  </div></details>
+ <details class="adv" id="othbox" open hidden><summary>Other Settings</summary><div class="body">
+  <div class="set"><label for="showpromo">Show Promotion</label><input type="checkbox" id="showpromo"></div>
+ </div></details>
 </section>
-<section id="store"><div class="store"><h2>Ko-Fi</h2><a href="https://ko-fi.com/kynorie" target="_blank" rel="noopener">Donate</a>
- <ul><li>Support development by donating how much money you want!</li></ul></div></section>
+<section id="donate"><div class="store"><p class="warn">These are my only wallets. Anything else is fake!</p>
+ <div class="w"><b>Monero:</b><code>87FM9LzNzNuGxKAsCWZGGf9fZLha8rU6YYAWXwJwUVTtjKMgjnUyWyYhP6FXN1uvNEgWavUQkfLyG2uJ2RjqaNChMS99RTd</code></div>
+ <div class="w"><b>Bitcoin:</b><code>bc1q22htjucgrd5efxznrtmgpvxnuge84ek2xzlufj</code></div></div></section>
 </main>
 <script>
 const $=s=>document.querySelector(s);
 const root=document.documentElement;
-const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',platform:'youtube',custom:false,bgc:'',cname:'',vfmt:'mp4',afmt:'mp3',...(()=>{try{return JSON.parse(localStorage.getItem('youxng')||'{}')}catch{return{}}})()};
+const cfg={dark:matchMedia('(prefers-color-scheme:dark)').matches,res:'choose',type:'manual',name:'title',navw:190,gap:'default',platform:'youtube',custom:false,bgc:'',cname:'',vfmt:'mp4',afmt:'mp3',showPromo:true,other:false,...(()=>{try{return JSON.parse(localStorage.getItem('youxng')||'{}')}catch{return{}}})()};
 delete cfg.style;delete cfg.prev;delete cfg.v;
 const isHex=v=>/^#[0-9a-f]{6}$/i.test(v);
 const rgb=h=>{const n=parseInt(h.slice(1),16);return[n>>16&255,n>>8&255,n&255]};
@@ -150,6 +165,10 @@ $('#ctheme').onchange=e=>{
  save()};
 $('#bgc').oninput=e=>{cfg.bgc=e.target.value;save()};
 $('#cname').oninput=e=>{cfg.cname=e.target.value;save()};
+const applyPromo=()=>{$('#promo').hidden=!cfg.showPromo;$('#othbox').hidden=!cfg.other;$('#showpromo').checked=cfg.showPromo};
+$('#hidepromo').onclick=()=>{cfg.showPromo=false;cfg.other=true;save();applyPromo()};
+$('#showpromo').onchange=e=>{cfg.showPromo=e.target.checked;save();applyPromo()};
+applyPromo();
 
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('nav button,section').forEach(x=>x.classList.remove('on'));
@@ -158,7 +177,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
 });
 
 const t=(s,tag='div')=>Object.assign(document.createElement(tag),{textContent:s});
-const short=s=>s.length>15?s.slice(0,15)+'...':s;
+const short=s=>s.slice(0,15).trimEnd();
 const msg=$('#msg'),url=$('#url');
 const P={
  youtube:{name:'YouTube',ph:'youtube.com/...',re:/youtube\.com\/|youtu\.be/i},
@@ -187,35 +206,59 @@ addEventListener('keydown',e=>e.key==='Escape'&&setMenu(false));
 pick(plat);
 function show(cls,...kids){msg.className='card '+cls;msg.replaceChildren(...kids);msg.hidden=false}
 ['focus','click','input'].forEach(e=>url.addEventListener(e,()=>msg.classList.contains('err')&&(msg.hidden=true)));
+url.addEventListener('input',()=>msg.classList.contains('ready')&&(msg.hidden=true));
 async function post(p,body){
  const r=await fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  const j=await r.json();if(!r.ok)throw new Error(j.error||'Something went wrong.');return j}
 
+const AUD=['mp3','ogg','m4a','flac','wav','opus'],isA=f=>AUD.includes(f);
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const saveFile=tok=>{const a=Object.assign(document.createElement('a'),{href:'/api/file/'+tok,download:''});a.hidden=true;document.body.append(a);a.click();a.remove()};
+const alive=async tok=>{try{return (await fetch('/api/file/'+tok,{method:'HEAD'})).ok}catch{return false}};
 let busy=false,cur;
+async function prep(fmt,res){
+ const name="Downloading '"+short(cur.title)+"'... "+lab(fmt)+' ';
+ show('ok',t(name+'0%'));
+ const j=await post('/api/prepare',{url:cur.url,platform:cur.platform,fmt,res,name:cfg.name,custom:cfg.cname.trim()});
+ for(;;){
+  const s=await (await fetch('/api/progress/'+j.job)).json();
+  if(s.error)throw new Error(s.error);
+  show('ok',t(name+s.pct+'%'));
+  if(s.status==='done')return s.token;
+  await wait(400);
+ }
+}
 async function go(){
  if(busy)return;
  const v=url.value.trim();
  if(!P[plat].re.test(v))return show('err',t('Please add a '+P[plat].name+' link!'));
  busy=true;show('ok',t('Finding video...'));
  try{
-  cur=await post('/api/info',{url:v,platform:plat});cur.platform=plat;busy=false;
-  if(cfg.type==='manual')ready();
-  else dl(cfg.type==='mp3'||cur.audio_only?cfg.afmt:cfg.vfmt,cfg.res==='choose'?'best':cfg.res);
- }catch(e){busy=false;show('err',t(e.message))}
-}
-async function dl(fmt,res){
- busy=true;show('ok',t("Downloading '"+short(cur.title)+"'"));
- try{
-  const j=await post('/api/prepare',{url:cur.url,platform:cur.platform,fmt,res,name:cfg.name,custom:cfg.cname.trim()});
-  Object.assign(document.createElement('a'),{href:'/api/file/'+j.token}).click();
+  cur=await post('/api/info',{url:v,platform:plat});cur.platform=plat;cur.files={};
+  const auto=cfg.type==='manual'?null:(cfg.type==='mp3'||cur.audio_only?cfg.afmt:cfg.vfmt);
+  const list=cur.audio_only?[cfg.afmt]:[cfg.vfmt,cfg.afmt];
+  if(auto&&list[1]===auto)list.reverse();
+  for(const f of list){
+   const res=isA(f)?'':(cfg.res==='choose'?'best':cfg.res);
+   cur.files[f]={token:await prep(f,res||'best'),res};
+   if(f===auto){saveFile(cur.files[f].token);await wait(400)}
+  }
   busy=false;ready();
  }catch(e){busy=false;show('err',t(e.message))}
 }
-function ready(){
+function ready(sel='best'){
  const q=document.createElement('select');
  q.append(new Option('Best available','best'),...cur.heights.map(h=>new Option(h+'p',h)));
+ q.value=sel;if(q.value!==sel)q.value='best';
  const res=()=>cfg.res==='choose'?q.value:cfg.res;
- const b=(l,k)=>Object.assign(document.createElement('button'),{className:'b',textContent:l,onclick:()=>!busy&&dl(k,res())});
+ const b=(l,k)=>Object.assign(document.createElement('button'),{className:'b',textContent:l,onclick:async()=>{
+  if(busy)return;
+  const want=isA(k)?'':res(),have=cur.files[k];
+  if(have&&have.res===want&&await alive(have.token))return saveFile(have.token);
+  busy=true;
+  try{const token=await prep(k,want||'best');cur.files[k]={token,res:want};busy=false;saveFile(token);ready(q.value)}
+  catch(e){busy=false;show('err',t(e.message))}
+ }});
  const acts=t('');acts.className='acts';
  if(cfg.res==='choose'&&!cur.audio_only)acts.append(q);
  if(!cur.audio_only)acts.append(b('Download '+lab(cfg.vfmt),cfg.vfmt));
@@ -225,14 +268,36 @@ function ready(){
 $('#go').onclick=go;
 url.addEventListener('keydown',e=>e.key==='Enter'&&go());
 
+const GH='<svg viewBox="0 0 20 20" fill="currentColor"><g transform="translate(-84 -7399)"><path d="M94,7399 C99.523,7399 104,7403.59 104,7409.253 C104,7413.782 101.138,7417.624 97.167,7418.981 C96.66,7419.082 96.48,7418.762 96.48,7418.489 C96.48,7418.151 96.492,7417.047 96.492,7415.675 C96.492,7414.719 96.172,7414.095 95.813,7413.777 C98.04,7413.523 100.38,7412.656 100.38,7408.718 C100.38,7407.598 99.992,7406.684 99.35,7405.966 C99.454,7405.707 99.797,7404.664 99.252,7403.252 C99.252,7403.252 98.414,7402.977 96.505,7404.303 C95.706,7404.076 94.85,7403.962 94,7403.958 C93.15,7403.962 92.295,7404.076 91.497,7404.303 C89.586,7402.977 88.746,7403.252 88.746,7403.252 C88.203,7404.664 88.546,7405.707 88.649,7405.966 C88.01,7406.684 87.619,7407.598 87.619,7408.718 C87.619,7412.646 89.954,7413.526 92.175,7413.785 C91.889,7414.041 91.63,7414.493 91.54,7415.156 C90.97,7415.418 89.522,7415.871 88.63,7414.304 C88.63,7414.304 88.101,7413.319 87.097,7413.247 C87.097,7413.247 86.122,7413.234 87.029,7413.87 C87.029,7413.87 87.684,7414.185 88.139,7415.37 C88.139,7415.37 88.726,7417.2 91.508,7416.58 C91.513,7417.437 91.522,7418.245 91.522,7418.489 C91.522,7418.76 91.338,7419.077 90.839,7418.982 C86.865,7417.627 84,7413.783 84,7409.253 C84,7403.59 88.478,7399 94,7399"/></g></svg>';
 async function updates(){
  const box=$('#upd');box.replaceChildren(t('Checking...'));
  try{
   const d=await (await fetch('/api/updates')).json();
-  box.replaceChildren(...[['YouXNG',d.app],['yt-dlp',d.ytdlp]].map(([n,x])=>{
+  const card=(n,x)=>{
    const c=t('');c.className='card ready';
    c.append(t(n,'b'),t(x.error?"Couldn't check for updates.":x.new?`New version available! (${x.current} → ${x.latest})`:"You're up to date. Current Version: "+x.current));
-   return c}));
+   return c};
+  const app=card('YouXNG',d.app),yt=card('yt-dlp',d.ytdlp),kids=[app];
+  if(d.app.new){
+   const a=Object.assign(document.createElement('a'),{className:'upbtn',href:'https://github.com/kynorie/youxng/releases',target:'_blank',rel:'noopener'});
+   a.innerHTML=GH;a.append('Install New Update');kids.push(a)}
+  if(d.ytdlp.new){
+   const p=t('Update it by running this in your terminal:');p.style.marginTop='8px';
+   const c=document.createElement('code');c.className='cmd';c.textContent='pip install -U yt-dlp';
+   yt.append(p,c)}
+  kids.push(yt);box.replaceChildren(...kids);
  }catch{box.replaceChildren(t("Couldn't check for updates."))}
 }
+async function checks(){
+ const box=$('#chk'),label=box.querySelector('span'),bad=[];
+ for(const n of ['ffmpeg','ffprobe','yt-dlp']){
+  label.textContent='Checking '+n+'...';
+  const [r]=await Promise.all([fetch('/api/check/'+n).then(r=>r.json()).catch(()=>({ok:false})),wait(450)]);
+  if(!r.ok)bad.push(n);
+ }
+ if(!bad.length){box.hidden=true;return}
+ box.className='card err';
+ box.replaceChildren(t('WARNING!','b'),...bad.map(n=>t('['+n+'] cannot be found!')));
+}
+checks();
 </script></body></html>
